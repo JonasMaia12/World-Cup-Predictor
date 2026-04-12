@@ -137,33 +137,47 @@ npm run coverage     # vitest com cobertura
 
 ## Git — Fluxo de Trabalho
 
+Trabalhar sempre na **pasta raiz** do projeto. Sem worktrees.
+
 Sequência obrigatória para cada funcionalidade:
 
-1. **Criar branch de feature** antes de qualquer implementação
+1. **Criar branch de feature** a partir da main atualizada
    ```bash
+   git checkout main && git pull origin main
    git checkout -b feat/<nome-da-feature>
    ```
-2. **Trabalhar no worktree** (`git worktree add .worktrees/<branch> feat/<nome>`)
-3. **Commitar ao final de cada funcionalidade** — nunca acumular mudanças grandes
-4. **Merge na main**
+
+2. **Publicar a branch imediatamente** — backup remoto desde o início
+   ```bash
+   git push -u origin feat/<nome-da-feature>
+   ```
+
+3. **Commitar incrementalmente** — commits pequenos e frequentes, nunca acumular
+   ```bash
+   git add <arquivos>
+   git commit -m "feat: descrição do que foi feito"
+   git push   # tracking já configurado, push simples
+   ```
+
+4. **Merge na main com --no-ff** — preserva o histórico da feature
    ```bash
    git checkout main
    git merge feat/<nome-da-feature> --no-ff
-   ```
-5. **Push para o GitHub**
-   ```bash
    git push origin main
    ```
-6. **Limpar branch e worktree**
+
+5. **Limpar branches** — local e remoto
    ```bash
-   git worktree remove .worktrees/<branch>
    git branch -d feat/<nome-da-feature>
+   git push origin --delete feat/<nome-da-feature>
    ```
 
-- Padrão de nome de branch: `feat/<nome-da-feature>` (ex: `feat/engine-classifier`, `feat/group-table-ui`)
-- Padrão de mensagem de commit: convencional (`feat:`, `fix:`, `test:`, `chore:`)
-- Branch `main` recebe apenas via merge de feature branches — nunca commitar direto na main
-- **Worktrees:** sempre criar em `.worktrees/<branch>` dentro do projeto (nunca global)
+**Regras:**
+- Padrão de branch: `feat/<nome>`, `fix/<nome>`, `chore/<nome>`
+- Padrão de commit: convencional — `feat:`, `fix:`, `test:`, `chore:`, `docs:`
+- `main` só recebe via merge de feature branch — nunca commitar direto
+- Sempre `git pull origin main` antes de criar uma nova branch
+- Push frequente na feature branch — nunca trabalhar só local por muito tempo
 
 ---
 
@@ -171,8 +185,8 @@ Sequência obrigatória para cada funcionalidade:
 
 Após a implementação de cada fase ser concluída, apagar os artefatos de planejamento que não têm mais valor de referência:
 
-- **Design specs** (`docs/superpowers/specs/`) — apagar após a fase estar implementada e testada
-- **Planos de implementação** (`docs/superpowers/plans/`) — apagar após todas as tasks do plano estarem concluídas
+- **Design specs** (`docs/specs/`) — apagar após a fase estar implementada e testada
+- **Planos de implementação** (`docs/plans/`) — apagar após todas as tasks do plano estarem concluídas
 - **Qualquer outro artefato de brainstorming** — apagar imediatamente após a sessão de planejamento
 
 Se um documento ainda tiver informação relevante não capturada em outro lugar (ex: decisões de arquitetura), resumir o essencial no CLAUDE.md antes de deletar.
