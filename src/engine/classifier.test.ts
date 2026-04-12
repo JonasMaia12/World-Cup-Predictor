@@ -74,4 +74,33 @@ describe('classifyGroup', () => {
     expect(rsa.drawn).toBe(1)
     expect(rsa.points).toBe(1)
   })
+
+  it('resolves two-way tie via tiebreaker — falls through to draw order', () => {
+    const groupA = GROUPS[0] // draw order: MEX(0), RSA(1), KOR(2), CZE(3)
+    const scores: ScoreMap = {
+      A1: { home: 1, away: 1 }, // MEX 1-1 RSA
+      A2: { home: 0, away: 0 }, // KOR 0-0 CZE
+      A3: { home: 1, away: 0 }, // MEX 1-0 KOR
+      A4: { home: 1, away: 0 }, // RSA 1-0 CZE
+      A5: { home: 0, away: 0 }, // MEX 0-0 CZE
+      A6: { home: 0, away: 0 }, // RSA 0-0 KOR
+    }
+    // MEX: A1 D(1) + A3 W(3) + A5 D(1) = 5pts, GF:2 GA:1 GD:+1
+    // RSA: A1 D(1) + A4 W(3) + A6 D(1) = 5pts, GF:2 GA:1 GD:+1
+    // KOR: A2 D(1) + A3 L(0) + A6 D(1) = 2pts, GF:1 GA:2 GD:-1
+    // CZE: A2 D(1) + A4 L(0) + A5 D(1) = 2pts, GF:1 GA:2 GD:-1
+    // MEX vs RSA: H2H A1 draw → H2H pts equal, H2H GD=0, H2H GF=1 each
+    //   → overall GD: MEX(+1) = RSA(+1) → overall GF: MEX(2) = RSA(2) → draw order: MEX first
+    // KOR vs CZE: H2H A2 draw → equal → overall GD/GF equal → draw order: KOR(idx 2) first
+    const standings = classifyGroup(groupA, scores)
+    expect(standings).toHaveLength(4)
+    expect(standings[0].teamCode).toBe('MEX')
+    expect(standings[0].points).toBe(5)
+    expect(standings[1].teamCode).toBe('RSA')
+    expect(standings[1].points).toBe(5)
+    expect(standings[2].teamCode).toBe('KOR')
+    expect(standings[2].points).toBe(2)
+    expect(standings[3].teamCode).toBe('CZE')
+    expect(standings[3].points).toBe(2)
+  })
 })
