@@ -142,6 +142,7 @@ npm run coverage     # vitest com cobertura
 - **Commit ao final de cada funcionalidade concluída** — nunca acumular mudanças grandes
 - Padrão de mensagem de commit: convencional (`feat:`, `fix:`, `test:`, `chore:`)
 - Branch `main` recebe apenas via merge de feature branches
+- **Worktrees:** sempre criar em `.worktrees/<branch>` dentro do projeto (nunca global)
 
 ---
 
