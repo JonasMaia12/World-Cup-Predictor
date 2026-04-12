@@ -137,11 +137,32 @@ npm run coverage     # vitest com cobertura
 
 ## Git — Fluxo de Trabalho
 
-- **Criar uma branch nova por funcionalidade** antes de começar qualquer implementação
+Sequência obrigatória para cada funcionalidade:
+
+1. **Criar branch de feature** antes de qualquer implementação
+   ```bash
+   git checkout -b feat/<nome-da-feature>
+   ```
+2. **Trabalhar no worktree** (`git worktree add .worktrees/<branch> feat/<nome>`)
+3. **Commitar ao final de cada funcionalidade** — nunca acumular mudanças grandes
+4. **Merge na main**
+   ```bash
+   git checkout main
+   git merge feat/<nome-da-feature> --no-ff
+   ```
+5. **Push para o GitHub**
+   ```bash
+   git push origin main
+   ```
+6. **Limpar branch e worktree**
+   ```bash
+   git worktree remove .worktrees/<branch>
+   git branch -d feat/<nome-da-feature>
+   ```
+
 - Padrão de nome de branch: `feat/<nome-da-feature>` (ex: `feat/engine-classifier`, `feat/group-table-ui`)
-- **Commit ao final de cada funcionalidade concluída** — nunca acumular mudanças grandes
 - Padrão de mensagem de commit: convencional (`feat:`, `fix:`, `test:`, `chore:`)
-- Branch `main` recebe apenas via merge de feature branches
+- Branch `main` recebe apenas via merge de feature branches — nunca commitar direto na main
 - **Worktrees:** sempre criar em `.worktrees/<branch>` dentro do projeto (nunca global)
 
 ---
