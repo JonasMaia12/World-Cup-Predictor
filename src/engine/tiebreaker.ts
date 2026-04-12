@@ -36,6 +36,11 @@ export function applyTiebreakers(
     }
   }
 
+  // NOTE: FIFA rules for multi-way ties require restarting the full cascade within
+  // any sub-group that remains tied after each H2H step. This implementation uses a
+  // flat pairwise sort which is correct for the common 2-way and 3-way tie cases but
+  // does not implement the recursive sub-group restart for complex ties (4+ teams with
+  // circular H2H results). Good enough for WC 2026 group stage; TODO: recursive cascade.
   return [...tied].sort((a, b) => {
     // 1. H2H points
     const hPts = h2h[b.teamCode].pts - h2h[a.teamCode].pts
@@ -52,7 +57,7 @@ export function applyTiebreakers(
     // 5. Overall goals scored in group
     const gf = b.goalsFor - a.goalsFor
     if (gf !== 0) return gf
-    // 6. Draw order (position in group.teams) — deterministic fallback
+    // 6. Draw order — group.teams.indexOf returns -1 if teamCode not in group (should never happen)
     return group.teams.indexOf(a.teamCode) - group.teams.indexOf(b.teamCode)
   })
 }

@@ -65,4 +65,30 @@ describe('applyTiebreakers', () => {
     expect(result[1].teamCode).toBe('RSA')
     expect(result[2].teamCode).toBe('KOR')
   })
+
+  it('resolves tie via head-to-head goals for when H2H points and GD equal', () => {
+    // 3-way tie: MEX, RSA, KOR — all draws in H2H fixtures:
+    //   A1: MEX 2-2 RSA, A3: MEX 1-1 KOR, A6: RSA 0-0 KOR
+    //   MEX H2H: pts=2, GD=0, GF=3 | RSA H2H: pts=2, GD=0, GF=2 | KOR H2H: pts=2, GD=0, GF=1
+    //   H2H pts equal → H2H GD equal → H2H GF: MEX(3) > RSA(2) > KOR(1) ✅
+    const groupA = GROUPS[0] // MEX(t1), RSA(t2), KOR(t3), CZE(t4)
+    // A1: MEX vs RSA, A3: MEX vs KOR, A6: RSA vs KOR
+    const scores: ScoreMap = {
+      A1: { home: 2, away: 2 }, // MEX 2-2 RSA
+      A3: { home: 1, away: 1 }, // MEX 1-1 KOR
+      A6: { home: 0, away: 0 }, // RSA 0-0 KOR
+    }
+    const tied = [
+      makeStanding('KOR', 2, 0, 1),
+      makeStanding('RSA', 2, 0, 2),
+      makeStanding('MEX', 2, 0, 3),
+    ]
+    const result = applyTiebreakers(tied, scores, groupA)
+    // H2H pts all equal (2 each), H2H GD all equal (0 each)
+    // H2H GF: MEX=3, RSA=2, KOR=1 → MEX first, RSA second, KOR third
+    expect(result).toHaveLength(3)
+    expect(result[0].teamCode).toBe('MEX')
+    expect(result[1].teamCode).toBe('RSA')
+    expect(result[2].teamCode).toBe('KOR')
+  })
 })
