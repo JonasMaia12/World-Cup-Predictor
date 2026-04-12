@@ -2,9 +2,13 @@ import type { Group } from '@/data/wc2026'
 import type { ScoreMap, Standing } from './types'
 
 export function applyTiebreakers(
-  _tied: Standing[],
-  _scores: ScoreMap,
-  _group: Group,
+  tied: Standing[],
+  scores: ScoreMap,
+  group: Group,
 ): Standing[] {
-  throw new Error('not implemented')
+  // Stub — returns teams in draw order (FIFA final fallback)
+  // Full implementation (H2H, GD cascade) comes in Task 3
+  return [...tied].sort(
+    (a, b) => group.teams.indexOf(a.teamCode) - group.teams.indexOf(b.teamCode),
+  )
 }
