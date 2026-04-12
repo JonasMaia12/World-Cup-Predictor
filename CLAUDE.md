@@ -1,48 +1,38 @@
 # World Cup Predictor 2026 — CLAUDE.md
 
-Contexto completo do projeto para sessões futuras.
+Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → classificação FIFA automática → bracket eliminatório em tempo real.
 
 ---
 
-## O Projeto
+## Stack
 
-Simulador interativo da Copa do Mundo 2026. O usuário preenche placares da fase de grupos, o motor de regras FIFA classifica automaticamente as seleções (com todos os critérios de desempate oficiais), e o bracket eliminatório é gerado e atualizado em tempo real.
-
-**Foco central:** precisão matemática dos critérios FIFA + UX mobile-first + código testável via TDD.
-
----
-
-## Stack Final
-
-| Camada | Tecnologia | Notas |
-|---|---|---|
-| Frontend | Vite + React 19 + TypeScript | useActionState, useOptimistic disponíveis |
-| UI | Shadcn/UI + Tailwind | cssVariables: true, OKLCH color format |
-| Estado global | Zustand (slices + persist middleware) | persist → LocalStorage key: `wcp2026-state` |
-| Data fetching | TanStack Query v5 | staleTime 5min, refetchOnWindowFocus: false |
-| ORM | Drizzle ORM + @libsql/client (Turso) | Apenas Fase 4 |
-| Testes unitários | Vitest | watchTriggerPatterns configurado |
-| Testes E2E | Playwright + CT experimental | |
-| Deploy | Vercel | CI/CD via GitHub Actions |
+| Camada | Tecnologia |
+|---|---|
+| Frontend | Vite + React 19 + TypeScript |
+| UI | Shadcn/UI + Tailwind (cssVariables, OKLCH) |
+| Estado | Zustand + persist (`wcp2026-state` → LocalStorage) |
+| Data fetching | TanStack Query v5 (staleTime 5min, refetchOnWindowFocus: false) |
+| Testes unitários | Vitest |
+| Testes E2E | Playwright |
+| Deploy | Vercel + GitHub Actions |
+| ORM (Fase 4) | Drizzle ORM + @libsql/client (Turso) |
 
 ---
 
-## Decisões de Design (não alterar sem consultar o usuário)
+## Decisões de Design
 
-- **Autenticação:** sem auth no MVP — brackets salvos apenas via LocalStorage
-- **Layout:** Sidebar + Content (grupos listados na sidebar, tabela/bracket no conteúdo principal)
-- **Bracket:** Cards por Rodada (mobile-first) — uma seção por fase eliminatória (Oitavas, Quartas, Semi, Final)
-- **Tema:** Dark Dourado/Troféu — fundo preto `#0c0a00`, acentos dourados `#f59e0b`, texto claro `#fef3c7`
-- **Arquitetura de estado:** Zustand + TanStack Query (não usar Context API ou Redux)
+- Sem auth no MVP — brackets salvos via LocalStorage
+- Layout: Sidebar (grupos + Bracket) + ContentArea
+- Bracket: cards por rodada, mobile-first (Oitavas → Final)
+- Tema: fundo `#0c0a00`, ouro `#f59e0b`, texto `#fef3c7`
+- Estado: Zustand + TanStack Query — sem Context API ou Redux
 
 ---
 
 ## API Externa — football-data.org
 
-- **Tier:** Gratuito — **limite de 10 requisições por minuto**
-- **Variável de ambiente:** `VITE_FOOTBALL_API_KEY` em `.env.local` (nunca commitar)
-- **Estratégia obrigatória:** sempre usar TanStack Query com `staleTime: 5 * 60 * 1000` e `refetchOnWindowFocus: false`
-- **Uso:** dados de confronto histórico (H2H) exibidos no bracket — feature nice-to-have
+- Tier gratuito: **10 req/min** — sempre usar `staleTime: 5 * 60 * 1000`
+- Chave: `VITE_FOOTBALL_API_KEY` em `.env.local` (nunca commitar)
 
 ---
 
@@ -50,70 +40,44 @@ Simulador interativo da Copa do Mundo 2026. O usuário preenche placares da fase
 
 ```
 src/
-├── engine/          ← Lógica pura FIFA (zero React, 100% testável via TDD)
-│   ├── classifier.ts
-│   ├── tiebreaker.ts
-│   └── bracket-generator.ts
-├── store/
-│   ├── tournament.slice.ts
-│   ├── ui.slice.ts
-│   └── index.ts     ← createStore com persist
-├── hooks/
-│   ├── useH2H.ts    ← TanStack Query → football-data.org
-│   └── useCommunityStats.ts  ← Fase 4
+├── engine/        ← Lógica FIFA pura (zero React, TDD)
+├── store/         ← Zustand slices (tournament + ui) + persist
+├── hooks/         ← useH2H (TanStack Query), useCommunityStats (Fase 4)
 ├── components/
-│   ├── layout/      ← AppShell, Sidebar, ContentArea
-│   ├── groups/      ← GroupTable, MatchRow, StandingsRow
-│   ├── bracket/     ← BracketView, RoundSection, MatchCard
-│   └── share/       ← ShareCard (Fase 4)
-├── data/
-│   └── wc2026.ts    ← 48 seleções, 12 grupos, fixtures oficiais FIFA 2026
-└── lib/
-    └── query-client.ts  ← TanStack Query config
+│   ├── layout/    ← AppShell, Sidebar, ContentArea
+│   ├── groups/    ← GroupTable, MatchRow
+│   ├── bracket/   ← BracketView
+│   └── share/     ← ShareCard (Fase 4)
+├── data/          ← wc2026.ts (48 times, 12 grupos, fixtures FIFA 2026)
+└── lib/           ← query-client.ts
 ```
 
 ---
 
 ## Princípios de Engenharia
 
-- **`engine/` isolado:** zero dependências de React. Pode ser testado sem montar componentes.
-- **TDD obrigatório no engine:** testes escritos antes da implementação. Usar skill `superpowers:test-driven-development`.
-- **MatchRow recebe callbacks via props:** não acessa o store Zustand diretamente — facilita testes.
-- **BracketView é derivado:** sem lógica própria, apenas renderiza o que o engine calculou.
-- **SOLID / DRY / KISS / YAGNI:** não implementar features complexas antes do necessário.
+- `engine/` sem dependências React — testável puro
+- TDD obrigatório no engine (`superpowers:test-driven-development`)
+- MatchRow props-only — sem acesso direto ao store
+- Standings e bracket sempre derivados no render — nunca armazenados
+- SOLID / DRY / KISS / YAGNI
 
 ---
 
-## Fases de Desenvolvimento
+## Status das Fases
 
-### Fase 1 — Fundação & Motor FIFA (TDD)
-- Scaffold do projeto, instalação de dependências
-- `src/data/wc2026.ts` com os 48 times e grupos oficiais
-- TDD: `classifier.ts` → `tiebreaker.ts` → `bracket-generator.ts`
-- Meta: 100% de cobertura no `engine/`
-- **Critério de saída:** `vitest run --coverage` verde
-
-### Fase 2 — Interface Reativa
-- Store Zustand + TanStack Query client
-- AppShell + Sidebar + GroupTable + BracketView
-- Fluxo completo: digitar placar → tabela atualiza → bracket reflete
-- **Critério de saída:** fluxo completo funcional no browser
-
-### Fase 3 — E2E & Estabilidade
-- `e2e/full-flow.spec.ts`: Grupo A completo → bracket → final
-- GitHub Actions: vitest → playwright → build
-- Deploy Vercel (preview)
-- **Critério de saída:** CI verde
-
-### Fase 4 — Social & Comunidade (nice-to-have)
-- ShareCard (imagem do bracket via html-to-image)
-- Vercel Edge Function + Turso: stats anônimas da comunidade
-- SEO / Open Graph
-- **Critério de saída:** compartilhamento funcionando no deploy
+- ✅ **Fase 1** — Engine FIFA (classifier, tiebreaker, bracket-generator) com TDD, ≥90% cobertura
+- ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
+- 🔲 **Fase 3** — E2E & Estabilidade
+  - `e2e/full-flow.spec.ts`: Grupo A completo → bracket → final
+  - GitHub Actions: vitest → playwright → build
+  - Deploy Vercel (preview)
+  - Critério de saída: CI verde
+- 🔲 **Fase 4** — Social (ShareCard, Turso stats, SEO/OG)
 
 ---
 
-## Comandos Relevantes (preencher após scaffold)
+## Comandos
 
 ```bash
 npm run dev          # dev server
@@ -125,76 +89,45 @@ npm run coverage     # vitest com cobertura
 
 ---
 
-## Skills Úteis Durante o Desenvolvimento
-
-- `superpowers:test-driven-development` — Fase 1, para cada arquivo do engine
-- `superpowers:verification-before-completion` — antes de marcar cada fase como concluída
-- `superpowers:dispatching-parallel-agents` — para componentes UI independentes em paralelo (Fase 2)
-- `superpowers:requesting-code-review` — ao final de cada fase
-- `superpowers:systematic-debugging` — quando critérios de desempate FIFA derem resultados inesperados
-
----
-
 ## Git — Fluxo de Trabalho
 
-Trabalhar sempre na **pasta raiz** do projeto. Sem worktrees.
+Trabalhar sempre na **pasta raiz**. Sem worktrees.
 
-Sequência obrigatória para cada funcionalidade:
+```bash
+# 1. Criar branch
+git checkout main && git pull origin main
+git checkout -b feat/<nome>
+git push -u origin feat/<nome>
 
-1. **Criar branch de feature** a partir da main atualizada
-   ```bash
-   git checkout main && git pull origin main
-   git checkout -b feat/<nome-da-feature>
-   ```
+# 2. Commitar incrementalmente
+git add <arquivos>
+git commit -m "feat: descrição"
+git push
 
-2. **Publicar a branch imediatamente** — backup remoto desde o início
-   ```bash
-   git push -u origin feat/<nome-da-feature>
-   ```
+# 3. Merge e push
+git checkout main
+git merge feat/<nome> --no-ff
+git push origin main
 
-3. **Commitar incrementalmente** — commits pequenos e frequentes, nunca acumular
-   ```bash
-   git add <arquivos>
-   git commit -m "feat: descrição do que foi feito"
-   git push   # tracking já configurado, push simples
-   ```
+# 4. Limpar
+git branch -d feat/<nome>
+git push origin --delete feat/<nome>
+```
 
-4. **Merge na main com --no-ff** — preserva o histórico da feature
-   ```bash
-   git checkout main
-   git merge feat/<nome-da-feature> --no-ff
-   git push origin main
-   ```
-
-5. **Limpar branches** — local e remoto
-   ```bash
-   git branch -d feat/<nome-da-feature>
-   git push origin --delete feat/<nome-da-feature>
-   ```
-
-**Regras:**
-- Padrão de branch: `feat/<nome>`, `fix/<nome>`, `chore/<nome>`
-- Padrão de commit: convencional — `feat:`, `fix:`, `test:`, `chore:`, `docs:`
-- `main` só recebe via merge de feature branch — nunca commitar direto
-- Sempre `git pull origin main` antes de criar uma nova branch
-- Push frequente na feature branch — nunca trabalhar só local por muito tempo
+- Branches: `feat/`, `fix/`, `chore/`
+- Commits: convencional — `feat:`, `fix:`, `test:`, `chore:`, `docs:`
+- Nunca commitar direto na `main`
 
 ---
 
-## Limpeza de Documentos de Planejamento
+## Limpeza de Docs de Planejamento
 
-Após a implementação de cada fase ser concluída, apagar os artefatos de planejamento que não têm mais valor de referência:
-
-- **Design specs** (`docs/specs/`) — apagar após a fase estar implementada e testada
-- **Planos de implementação** (`docs/plans/`) — apagar após todas as tasks do plano estarem concluídas
-- **Qualquer outro artefato de brainstorming** — apagar imediatamente após a sessão de planejamento
-
-Se um documento ainda tiver informação relevante não capturada em outro lugar (ex: decisões de arquitetura), resumir o essencial no CLAUDE.md antes de deletar.
+Apagar após cada fase concluída: `docs/specs/` e `docs/plans/`. Se houver decisão relevante não capturada aqui, resumir no CLAUDE.md antes de deletar.
 
 ---
 
-## Contexto Adicional
+## Contexto FIFA 2026
 
-- Os grupos e fixtures da Copa 2026 já foram anunciados pela FIFA — usar dados reais
-- O torneio tem 48 seleções, 12 grupos de 4 times, 3 times classificam por grupo (os 2 primeiros + os melhores terceiros)
-- O bracket segue as chaves pré-definidas pela FIFA para 2026 (não sorteio pós-grupos)
+- 48 seleções, 12 grupos de 4 — classificam os 2 primeiros + 8 melhores terceiros = 32 times
+- Bracket com chaves pré-definidas pela FIFA (não sorteio pós-grupos)
+- Critérios de desempate: H2H pts → H2H GD → H2H GF → GD geral → GF geral → ordem do sorteio
