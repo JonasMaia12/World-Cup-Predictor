@@ -30,6 +30,19 @@ export function Sidebar() {
             Grupo {g}
           </button>
         ))}
+        <div className="border-t border-wcp-border my-1" />
+        <button
+          onClick={() => setSelectedGroup('bracket')}
+          aria-pressed={selectedGroup === 'bracket'}
+          className={cn(
+            'w-full text-left px-3 py-2 rounded text-sm transition-colors',
+            selectedGroup === 'bracket'
+              ? 'bg-wcp-gold text-wcp-bg font-semibold'
+              : 'text-wcp-text hover:bg-wcp-border/30',
+          )}
+        >
+          🏆 Bracket
+        </button>
       </nav>
     </aside>
   )
