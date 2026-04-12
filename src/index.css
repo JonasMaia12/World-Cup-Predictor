@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-wcp-border;
+  }
+  body {
+    @apply bg-wcp-bg text-wcp-text;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
