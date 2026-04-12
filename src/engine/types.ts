@@ -24,6 +24,7 @@ export interface BracketMatch {
 
 export interface Bracket {
   roundOf32: BracketMatch[]
+  roundOf16: BracketMatch[]
   quarterFinals: BracketMatch[]
   semiFinals: BracketMatch[]
   thirdPlace: BracketMatch
