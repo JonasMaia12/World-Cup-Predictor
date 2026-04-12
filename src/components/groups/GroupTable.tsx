@@ -8,11 +8,11 @@ interface GroupTableProps {
 }
 
 export function GroupTable({ groupId }: GroupTableProps) {
-  const scores = useStore((s) => s.scores)
-  const setScore = useStore((s) => s.setScore)
-
   const group = GROUPS.find((g) => g.id === groupId)
   if (!group) return null
+
+  const scores = useStore((s) => s.scores)
+  const setScore = useStore((s) => s.setScore)
 
   const standings = classifyGroup(group, scores)
   const fixtures = FIXTURES.filter((f) => f.group === groupId)
