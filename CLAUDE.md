@@ -145,6 +145,18 @@ npm run coverage     # vitest com cobertura
 
 ---
 
+## Limpeza de Documentos de Planejamento
+
+Após a implementação de cada fase ser concluída, apagar os artefatos de planejamento que não têm mais valor de referência:
+
+- **Design specs** (`docs/superpowers/specs/`) — apagar após a fase estar implementada e testada
+- **Planos de implementação** (`docs/superpowers/plans/`) — apagar após todas as tasks do plano estarem concluídas
+- **Qualquer outro artefato de brainstorming** — apagar imediatamente após a sessão de planejamento
+
+Se um documento ainda tiver informação relevante não capturada em outro lugar (ex: decisões de arquitetura), resumir o essencial no CLAUDE.md antes de deletar.
+
+---
+
 ## Contexto Adicional
 
 - Os grupos e fixtures da Copa 2026 já foram anunciados pela FIFA — usar dados reais
