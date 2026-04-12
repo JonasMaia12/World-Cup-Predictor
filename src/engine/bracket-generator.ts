@@ -25,8 +25,8 @@ function selectBest3rds(standings: GroupStandings): Standing[] {
 
   // NOTE: FIFA best-3rd ranking criteria continue beyond goals-for (goals-against, then lots),
   // but those levels are omitted here — ties at this depth are extremely rare in practice.
-  return thirds
-    .toSorted((a, b) =>
+  return [...thirds]
+    .sort((a, b) =>
       b.points - a.points ||
       b.goalDiff - a.goalDiff ||
       b.goalsFor - a.goalsFor

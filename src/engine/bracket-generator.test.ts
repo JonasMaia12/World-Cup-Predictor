@@ -10,7 +10,7 @@ function buildCompleteStandings(): GroupStandings {
   const standings: GroupStandings = {}
   for (const group of GROUPS) {
     const prefix = group.id
-    const [t1, , t3, t4] = group.teams
+    const [_t1, , _t3, _t4] = group.teams
     // T1 wins all, T3 draws with T4, T2 loses all → clear order
     const scores: ScoreMap = {
       [`${prefix}1`]: { home: 2, away: 0 }, // T1 2-0 T2
