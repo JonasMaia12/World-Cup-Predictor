@@ -68,11 +68,13 @@ src/
 
 - ✅ **Fase 1** — Engine FIFA (classifier, tiebreaker, bracket-generator) com TDD, ≥90% cobertura
 - ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
-- 🔲 **Fase 3** — E2E & Estabilidade
-  - `e2e/full-flow.spec.ts`: Grupo A completo → bracket → final
-  - GitHub Actions: vitest → playwright → build
-  - Deploy Vercel (preview)
-  - Critério de saída: CI verde
+- 🟡 **Fase 3** — E2E & Estabilidade ← **PRÓXIMA SESSÃO: executar plano**
+  - Design spec: `docs/superpowers/specs/2026-04-13-phase3-design.md`
+  - Plano de implementação: `docs/superpowers/plans/2026-04-13-phase3-e2e-stability.md`
+  - **Como continuar:** invocar `superpowers:executing-plans` ou `superpowers:subagent-driven-development` com o plano acima — 6 tarefas sequenciais, começar pela Task 1
+  - Grupos E2E: A (MEX/RSA), C (BRA/MAR), D (USA/PAR) + bracket R32
+  - Vercel: integração nativa GitHub (sem config no CI)
+  - Critério de saída: CI verde no GitHub Actions
 - 🔲 **Fase 4** — Social (ShareCard, Turso stats, SEO/OG)
 
 ---
