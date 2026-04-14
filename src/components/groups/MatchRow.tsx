@@ -35,6 +35,7 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange }: MatchRo
           value={homeScore ?? ''}
           onChange={handleHome}
           placeholder="–"
+          data-testid={`score-home-${match.id}`}
           className="w-10 text-center bg-wcp-bg border border-wcp-border rounded text-wcp-text text-sm py-1 focus:border-wcp-gold focus:outline-none"
         />
         <span className="text-wcp-gold font-bold text-sm">—</span>
@@ -44,6 +45,7 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange }: MatchRo
           value={awayScore ?? ''}
           onChange={handleAway}
           placeholder="–"
+          data-testid={`score-away-${match.id}`}
           className="w-10 text-center bg-wcp-bg border border-wcp-border rounded text-wcp-text text-sm py-1 focus:border-wcp-gold focus:outline-none"
         />
       </div>
