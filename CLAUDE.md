@@ -14,7 +14,7 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 | Data fetching | TanStack Query v5 (staleTime 5min, refetchOnWindowFocus: false) |
 | Testes unitários | Vitest |
 | Testes E2E | Playwright |
-| Deploy | Vercel + GitHub Actions |
+| Deploy | GitHub Pages + GitHub Actions |
 | ORM (Fase 4) | Drizzle ORM + @libsql/client (Turso) |
 
 ---
@@ -68,8 +68,8 @@ src/
 
 - ✅ **Fase 1** — Engine FIFA (classifier, tiebreaker, bracket-generator) com TDD, ≥90% cobertura
 - ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
-- ✅ **Fase 3** — E2E & Estabilidade (Playwright 4 testes, GitHub Actions CI verde)
-- 🔲 **Fase 4** — Social (ShareCard, Turso stats, SEO/OG)
+- ✅ **Fase 3** — E2E & Estabilidade (Playwright 4 testes, CI verde, deploy GitHub Pages)
+- 🔲 **Fase 4** — Social (ShareCard, Turso stats, SEO/OG) ← **PRÓXIMA**
 
 ---
 
@@ -112,6 +112,14 @@ git push                                 # CI roda a cada push
 - Commits: convencional — `feat:`, `fix:`, `test:`, `chore:`, `docs:`
 - **Nunca commitar direto na `main`** — sempre via PR
 - Merge strategy: **Squash and Merge** (nunca merge commit ou rebase)
+
+---
+
+## Deploy
+
+- **URL produção:** https://jonasmaia12.github.io/World-Cup-Predictor/
+- Todo push na `main` dispara `.github/workflows/deploy.yml` automaticamente
+- CI (`.github/workflows/ci.yml`) roda em todo push e PR — vitest → playwright → build
 
 ---
 
