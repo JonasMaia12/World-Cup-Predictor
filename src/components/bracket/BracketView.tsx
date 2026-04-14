@@ -18,7 +18,10 @@ function TeamSlot({ code }: { code: string | null }) {
 
 function MatchCard({ match }: { match: BracketMatch }) {
   return (
-    <div className="bg-wcp-sidebar border border-wcp-border rounded-lg px-4 py-3 flex flex-col gap-1 text-sm min-w-[160px]">
+    <div
+      data-testid={`bracket-match-${match.id}`}
+      className="bg-wcp-sidebar border border-wcp-border rounded-lg px-4 py-3 flex flex-col gap-1 text-sm min-w-[160px]"
+    >
       <TeamSlot code={match.home} />
       <span className="text-wcp-gold text-xs">vs</span>
       <TeamSlot code={match.away} />
