@@ -93,32 +93,31 @@ npm run coverage     # vitest com cobertura
 
 ## Git — Fluxo de Trabalho
 
-Trabalhar sempre na **pasta raiz**. Sem worktrees.
+**GitHub Flow + Squash Merge.** `main` sempre deployável. Cada feature vira 1 commit limpo.
 
 ```bash
-# 1. Criar branch
+# 1. Branch nova a partir do main atualizado
 git checkout main && git pull origin main
 git checkout -b feat/<nome>
-git push -u origin feat/<nome>
+git push -u origin feat/<nome>          # push imediato — abre PR em Draft
 
-# 2. Commitar incrementalmente
+# 2. Desenvolver com commits incrementais
 git add <arquivos>
 git commit -m "feat: descrição"
-git push
+git push                                 # CI roda a cada push
 
-# 3. Merge e push
-git checkout main
-git merge feat/<nome> --no-ff
-git push origin main
+# 3. Code review
+# → No GitHub: marcar PR como "Ready for review"
+# → Claude: superpowers:requesting-code-review
 
-# 4. Limpar
-git branch -d feat/<nome>
-git push origin --delete feat/<nome>
+# 4. Após aprovação: Squash and Merge no GitHub
+# → GitHub deleta a branch automaticamente
 ```
 
 - Branches: `feat/`, `fix/`, `chore/`
 - Commits: convencional — `feat:`, `fix:`, `test:`, `chore:`, `docs:`
-- Nunca commitar direto na `main`
+- **Nunca commitar direto na `main`** — sempre via PR
+- Merge strategy: **Squash and Merge** (nunca merge commit ou rebase)
 
 ---
 
