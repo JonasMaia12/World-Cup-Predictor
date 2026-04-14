@@ -9,10 +9,11 @@ async function fillGroupScores(page: Page, scores: Record<string, [number, numbe
 }
 
 test.beforeEach(async ({ page }) => {
+  // Inject before any page scripts so Zustand persist middleware finds no state to hydrate
+  await page.addInitScript(() => {
+    localStorage.removeItem('wcp2026-state')
+  })
   await page.goto('/')
-  // Clear persisted Zustand state so each test starts fresh
-  await page.evaluate(() => localStorage.removeItem('wcp2026-state'))
-  await page.reload()
 })
 
 // ---------------------------------------------------------------------------
