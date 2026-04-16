@@ -9,9 +9,13 @@ export function useShareLink() {
   const share = useCallback(async () => {
     const encoded = encodeState(scores)
     const url = `${window.location.origin}${window.location.pathname}?s=${encoded}`
-    await navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // clipboard unavailable — silent no-op for now
+    }
   }, [scores])
 
   return { share, copied }
