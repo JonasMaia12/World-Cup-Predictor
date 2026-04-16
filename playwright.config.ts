@@ -5,6 +5,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'html',
   use: {
     baseURL: 'http://localhost:5173',
+    permissions: ['clipboard-read', 'clipboard-write'],
   },
   webServer: {
     command: 'npm run dev',
