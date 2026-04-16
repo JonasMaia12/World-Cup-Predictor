@@ -15,7 +15,7 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 | Testes unitários | Vitest |
 | Testes E2E | Playwright |
 | Deploy | GitHub Pages + GitHub Actions |
-| ORM (Fase 4) | Drizzle ORM + @libsql/client (Turso) |
+| ORM (Fase 5) | Drizzle ORM + @libsql/client (Turso) |
 
 ---
 
@@ -42,12 +42,12 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 src/
 ├── engine/        ← Lógica FIFA pura (zero React, TDD)
 ├── store/         ← Zustand slices (tournament + ui) + persist
-├── hooks/         ← useH2H (TanStack Query), useCommunityStats (Fase 4)
+├── hooks/         ← useShareLink, useH2H (TanStack Query), useCommunityStats (Fase 5)
 ├── components/
-│   ├── layout/    ← AppShell, Sidebar, ContentArea
+│   ├── layout/    ← AppShell (com header), Sidebar, ContentArea
 │   ├── groups/    ← GroupTable, MatchRow
 │   ├── bracket/   ← BracketView
-│   └── share/     ← ShareCard (Fase 4)
+│   └── share/     ← ShareButton
 ├── data/          ← wc2026.ts (48 times, 12 grupos, fixtures FIFA 2026)
 └── lib/           ← query-client.ts
 ```
@@ -68,8 +68,9 @@ src/
 
 - ✅ **Fase 1** — Engine FIFA (classifier, tiebreaker, bracket-generator) com TDD, ≥90% cobertura
 - ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
-- ✅ **Fase 3** — E2E & Estabilidade (Playwright 4 testes, CI verde, deploy GitHub Pages)
-- 🔲 **Fase 4** — Social (ShareCard, Turso stats, SEO/OG) ← **PRÓXIMA**
+- ✅ **Fase 3** — E2E & Estabilidade (Playwright 6 testes, CI verde, deploy GitHub Pages)
+- ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes, code review @claude aprovado
+- 🔲 **Fase 5** — Turso stats (useCommunityStats, Drizzle ORM, database `wcp2026` já criada em aws-eu-west-1) ← **PRÓXIMA**
 
 ---
 
