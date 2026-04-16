@@ -14,7 +14,8 @@ export function useShareLink() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // clipboard unavailable — silent no-op for now
+      // clipboard unavailable — show URL via prompt so user can copy manually
+      window.prompt('Copie o link do seu bracket:', url)
     }
   }, [scores])
 

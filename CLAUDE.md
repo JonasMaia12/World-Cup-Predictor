@@ -93,18 +93,24 @@ npm run coverage     # vitest com cobertura
 # 1. Branch nova a partir do main atualizado
 git checkout main && git pull origin main
 git checkout -b feat/<nome>
-git push -u origin feat/<nome>          # push imediato — abre PR em Draft
+git push -u origin feat/<nome>
 
 # 2. Desenvolver com commits incrementais
 git add <arquivos>
 git commit -m "feat: descrição"
 git push                                 # CI roda a cada push
 
-# 3. Code review
-# → No GitHub: marcar PR como "Ready for review"
-# → Claude: superpowers:requesting-code-review
+# 3. Abrir PR
+gh pr create --title "feat: descrição" --body "## Summary\n- ...\n\n## Test Plan\n- [ ] ..."
 
-# 4. Após aprovação: Squash and Merge no GitHub
+# 4. Code review automatizado com @claude
+gh pr comment <número> --body "@claude please review this PR"
+# Monitorar novos comentários do PR (polling):
+#   gh pr view <número> --json comments --jq '.comments[-1].body'
+# Quando review chegar: ler, ajustar código, push, chamar @claude novamente
+# Repetir até @claude aprovar
+
+# 5. Após aprovação: Squash and Merge no GitHub
 # → GitHub deleta a branch automaticamente
 ```
 
@@ -112,6 +118,7 @@ git push                                 # CI roda a cada push
 - Commits: convencional — `feat:`, `fix:`, `test:`, `chore:`, `docs:`
 - **Nunca commitar direto na `main`** — sempre via PR
 - Merge strategy: **Squash and Merge** (nunca merge commit ou rebase)
+- **Code review obrigatório via `@claude`** antes de mergear — ciclo iterativo até aprovação
 
 ---
 

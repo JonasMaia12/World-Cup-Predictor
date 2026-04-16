@@ -12,6 +12,8 @@ import './index.css'
 const sharedScores = decodeState(window.location.search)
 if (sharedScores) {
   useStore.getState().setScores(sharedScores)
+  // Clean ?s= from address bar after restoring — avoids stale param showing
+  history.replaceState({}, '', window.location.pathname)
 }
 
 createRoot(document.getElementById('root')!).render(
