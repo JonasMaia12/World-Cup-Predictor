@@ -1,5 +1,6 @@
 import type { Match } from '@/data/wc2026'
 import { TEAMS } from '@/data/wc2026'
+import { cn } from '@/lib/utils'
 
 interface MatchRowProps {
   match: Match
@@ -8,51 +9,90 @@ interface MatchRowProps {
   onScoreChange: (matchId: string, home: number, away: number) => void
 }
 
+function Stepper({
+  value,
+  onIncrement,
+  onDecrement,
+  testIdPlus,
+  testIdMinus,
+  testIdValue,
+}: {
+  value: number
+  onIncrement: () => void
+  onDecrement: () => void
+  testIdPlus: string
+  testIdMinus: string
+  testIdValue: string
+}) {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <button
+        data-testid={testIdPlus}
+        onClick={onIncrement}
+        className="w-7 h-7 rounded-full bg-wcp-primary-faint border border-wcp-primary-light text-wcp-primary font-bold text-base flex items-center justify-center leading-none"
+        aria-label="incrementar"
+      >
+        +
+      </button>
+      <span
+        data-testid={testIdValue}
+        className="text-xl font-bold text-wcp-text min-w-[28px] text-center tabular-nums"
+      >
+        {value}
+      </span>
+      <button
+        data-testid={testIdMinus}
+        onClick={onDecrement}
+        disabled={value === 0}
+        className={cn(
+          'w-7 h-7 rounded-full bg-wcp-primary-faint border border-wcp-primary-light text-wcp-primary font-bold text-base flex items-center justify-center leading-none',
+          value === 0 && 'opacity-30 cursor-not-allowed',
+        )}
+        aria-label="decrementar"
+      >
+        −
+      </button>
+    </div>
+  )
+}
+
 export function MatchRow({ match, homeScore, awayScore, onScoreChange }: MatchRowProps) {
+  const home = homeScore ?? 0
+  const away = awayScore ?? 0
   const homeTeam = TEAMS.find((t) => t.code === match.homeTeam)
   const awayTeam = TEAMS.find((t) => t.code === match.awayTeam)
 
-  const handleHome = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, parseInt(e.target.value) || 0)
-    onScoreChange(match.id, val, awayScore ?? 0)
-  }
-
-  const handleAway = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, parseInt(e.target.value) || 0)
-    onScoreChange(match.id, homeScore ?? 0, val)
-  }
-
   return (
-    <div className="flex items-center justify-between px-3 py-2 rounded bg-wcp-sidebar hover:bg-wcp-border/20 transition-colors">
-      <span className="flex-1 text-sm text-wcp-text flex items-center gap-1">
-        <span>{homeTeam?.flag}</span>
-        <span>{match.homeTeam}</span>
-      </span>
-      <div className="flex items-center gap-2">
-        <input
-          type="number"
-          min={0}
-          value={homeScore ?? ''}
-          onChange={handleHome}
-          placeholder="–"
-          data-testid={`score-home-${match.id}`}
-          className="w-10 text-center bg-wcp-bg border border-wcp-border rounded text-wcp-text text-sm py-1 focus:border-wcp-gold focus:outline-none"
+    <div className="flex items-center justify-between bg-wcp-surface border border-wcp-border rounded-xl px-4 py-3 gap-2">
+      <div className="flex flex-col items-center gap-1 flex-1">
+        <span className="text-3xl leading-none">{homeTeam?.flag}</span>
+        <span className="text-[10px] font-semibold text-wcp-text tracking-wide">{match.homeTeam}</span>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Stepper
+          value={home}
+          onIncrement={() => onScoreChange(match.id, home + 1, away)}
+          onDecrement={() => home > 0 && onScoreChange(match.id, home - 1, away)}
+          testIdPlus={`home-plus-${match.id}`}
+          testIdMinus={`home-minus-${match.id}`}
+          testIdValue={`score-home-${match.id}`}
         />
-        <span className="text-wcp-gold font-bold text-sm">—</span>
-        <input
-          type="number"
-          min={0}
-          value={awayScore ?? ''}
-          onChange={handleAway}
-          placeholder="–"
-          data-testid={`score-away-${match.id}`}
-          className="w-10 text-center bg-wcp-bg border border-wcp-border rounded text-wcp-text text-sm py-1 focus:border-wcp-gold focus:outline-none"
+        <span className="text-wcp-primary font-bold px-1">×</span>
+        <Stepper
+          value={away}
+          onIncrement={() => onScoreChange(match.id, home, away + 1)}
+          onDecrement={() => away > 0 && onScoreChange(match.id, home, away - 1)}
+          testIdPlus={`away-plus-${match.id}`}
+          testIdMinus={`away-minus-${match.id}`}
+          testIdValue={`score-away-${match.id}`}
         />
       </div>
-      <span className="flex-1 text-sm text-wcp-text flex items-center justify-end gap-1">
-        <span>{match.awayTeam}</span>
-        <span>{awayTeam?.flag}</span>
-      </span>
+
+      <div className="flex flex-col items-center gap-1 flex-1">
+        <span className="text-3xl leading-none">{awayTeam?.flag}</span>
+        <span className="text-[10px] font-semibold text-wcp-text tracking-wide">{match.awayTeam}</span>
+      </div>
     </div>
   )
 }

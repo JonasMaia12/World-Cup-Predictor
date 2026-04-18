@@ -1,39 +1,45 @@
 import { useCommunityStats } from '@/hooks/useCommunityStats'
+import { cn } from '@/lib/utils'
 
-export function CommunityStats() {
+export function CommunityStatsBar() {
   const { data, isLoading, isError } = useCommunityStats()
 
-  if (isLoading) return <p className="px-3 py-2 text-xs text-wcp-text/50">Carregando stats...</p>
-  if (isError || !data?.length) return null
+  if (!import.meta.env.VITE_TURSO_URL) return null
+  if (isLoading || isError || !data?.length) return null
 
   const top5 = data.slice(0, 5)
-  // total_votes é um agregado global igual para todas as linhas
-  const totalVotes = data[0]?.totalVotes ?? 0
 
   return (
-    <div className="px-3 py-3 space-y-2">
-      <p className="text-wcp-gold text-xs font-semibold uppercase tracking-wider">
-        Favoritos da Comunidade
-      </p>
-      {totalVotes > 0 && (
-        <p className="text-wcp-text/50 text-xs">{totalVotes} votos registrados</p>
-      )}
-      <ul className="space-y-1.5">
-        {top5.map((stat) => (
-          <li key={stat.teamCode}>
-            <div className="flex justify-between text-xs mb-0.5">
-              <span className="text-wcp-text">{stat.teamCode}</span>
-              <span className="text-wcp-text/70">{stat.championPct.toFixed(1)}%</span>
+    <div className="bg-wcp-surface-subtle border-b border-wcp-border px-4 py-2">
+      <div className="flex items-center gap-3 overflow-x-auto scrollbar-none max-w-2xl mx-auto">
+        <span className="text-[8px] tracking-widest text-wcp-muted uppercase shrink-0">
+          🏆 Favoritos
+        </span>
+        {top5.map((stat, idx) => (
+          <div
+            key={stat.teamCode}
+            className="flex items-center gap-1.5 bg-wcp-surface border border-wcp-border rounded-full px-2.5 py-1 shrink-0"
+          >
+            <div
+              className={cn(
+                'w-[14px] h-[14px] rounded-full text-white text-[7px] font-bold flex items-center justify-center leading-none',
+                idx === 0 ? 'bg-wcp-primary' : 'bg-wcp-muted',
+              )}
+            >
+              {idx + 1}
             </div>
-            <div className="h-1 rounded-full bg-wcp-border/40 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-wcp-gold"
-                style={{ width: `${Math.min(stat.championPct, 100)}%` }}
-              />
-            </div>
-          </li>
+            <span className="text-[9px] font-semibold text-wcp-text">{stat.teamCode}</span>
+            <span
+              className={cn(
+                'text-[9px] font-semibold',
+                idx === 0 ? 'text-wcp-primary' : 'text-wcp-muted',
+              )}
+            >
+              {stat.championPct.toFixed(1)}%
+            </span>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

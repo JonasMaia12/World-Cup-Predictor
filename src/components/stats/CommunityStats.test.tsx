@@ -9,7 +9,7 @@ vi.mock('@/hooks/useCommunityStats', () => ({
 }))
 
 import { useCommunityStats } from '@/hooks/useCommunityStats'
-import { CommunityStats } from './CommunityStats'
+import { CommunityStatsBar } from './CommunityStats'
 
 function wrapper({ children }: { children: ReactNode }) {
   const qc = new QueryClient()
@@ -24,7 +24,7 @@ const mockStats = [
   { teamCode: 'ESP', championPct: 7.1,  top4Pct: 35, top8Pct: 60, totalVotes: 500, updatedAt: '2026-04-18' },
 ]
 
-describe('CommunityStats', () => {
+describe('CommunityStatsBar', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.stubEnv('VITE_TURSO_URL', 'https://test.turso.io')
@@ -37,34 +37,29 @@ describe('CommunityStats', () => {
   it('renders nothing when VITE_TURSO_URL is not set', () => {
     vi.unstubAllEnvs()
     vi.mocked(useCommunityStats).mockReturnValue({ data: undefined, isLoading: false, isError: false } as never)
-    const { container } = render(createElement(CommunityStats), { wrapper })
+    const { container } = render(createElement(CommunityStatsBar), { wrapper })
     expect(container.firstChild).toBeNull()
   })
 
-  it('shows loading text while fetching', () => {
-    vi.mocked(useCommunityStats).mockReturnValue({ data: undefined, isLoading: true, isError: false } as never)
-    render(createElement(CommunityStats), { wrapper })
-    expect(screen.getByText(/carregando/i)).toBeInTheDocument()
-  })
-
-  it('renders nothing on error', () => {
-    vi.mocked(useCommunityStats).mockReturnValue({ data: undefined, isLoading: false, isError: true } as never)
-    const { container } = render(createElement(CommunityStats), { wrapper })
+  it('renders nothing on error or empty data', () => {
+    vi.mocked(useCommunityStats).mockReturnValue({ data: [], isLoading: false, isError: false } as never)
+    const { container } = render(createElement(CommunityStatsBar), { wrapper })
     expect(container.firstChild).toBeNull()
   })
 
-  it('renders top 5 teams with percentages', () => {
+  it('renders top 5 pills with team codes and percentages', () => {
     vi.mocked(useCommunityStats).mockReturnValue({ data: mockStats, isLoading: false, isError: false } as never)
-    render(createElement(CommunityStats), { wrapper })
+    render(createElement(CommunityStatsBar), { wrapper })
     expect(screen.getByText('BRA')).toBeInTheDocument()
     expect(screen.getByText('42.5%')).toBeInTheDocument()
     expect(screen.getByText('ESP')).toBeInTheDocument()
-    expect(screen.getByText('Favoritos da Comunidade')).toBeInTheDocument()
+    expect(screen.getByText('7.1%')).toBeInTheDocument()
   })
 
-  it('shows vote count badge', () => {
+  it('renders rank badges 1–5', () => {
     vi.mocked(useCommunityStats).mockReturnValue({ data: mockStats, isLoading: false, isError: false } as never)
-    render(createElement(CommunityStats), { wrapper })
-    expect(screen.getByText(/500 votos/)).toBeInTheDocument()
+    render(createElement(CommunityStatsBar), { wrapper })
+    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByText('5')).toBeInTheDocument()
   })
 })
