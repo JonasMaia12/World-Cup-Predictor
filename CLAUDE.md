@@ -9,22 +9,22 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 | Camada | Tecnologia |
 |---|---|
 | Frontend | Vite + React 19 + TypeScript |
-| UI | Shadcn/UI + Tailwind (cssVariables, OKLCH) |
+| UI | Shadcn/UI + Tailwind (cssVariables, tokens `wcp-*`) |
 | Estado | Zustand + persist (`wcp2026-state` → LocalStorage) |
 | Data fetching | TanStack Query v5 (staleTime 5min, refetchOnWindowFocus: false) |
 | Testes unitários | Vitest |
 | Testes E2E | Playwright |
 | Deploy | GitHub Pages + GitHub Actions |
-| ORM (Fase 5) | Drizzle ORM + @libsql/client (Turso) |
+| ORM | Drizzle ORM + @libsql/client (Turso) |
 
 ---
 
 ## Decisões de Design
 
 - Sem auth no MVP — brackets salvos via LocalStorage
-- Layout: Sidebar (grupos + Bracket) + ContentArea
-- Bracket: cards por rodada, mobile-first (Oitavas → Final)
-- Tema: fundo `#0c0a00`, ouro `#f59e0b`, texto `#fef3c7`
+- Layout: coluna única full-width — Header → CommunityStatsBar → GroupAccordion → Bracket
+- Bracket: "espinha de peixe" convergindo para o centro (Final); mobile = minimap + cards por rodada
+- Tema: **Cyber Green Light** — fundo `#f0f4f1`, verde neon `#00a854`, texto `#1a2a1a`
 - Estado: Zustand + TanStack Query — sem Context API ou Redux
 
 ---
@@ -42,14 +42,35 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 src/
 ├── engine/        ← Lógica FIFA pura (zero React, TDD)
 ├── store/         ← Zustand slices (tournament + ui) + persist
-├── hooks/         ← useShareLink, useH2H (TanStack Query), useCommunityStats (Fase 5)
+├── hooks/         ← useShareLink, useH2H (TanStack Query), useCommunityStats
 ├── components/
-│   ├── layout/    ← AppShell (com header), Sidebar, ContentArea
-│   ├── groups/    ← GroupTable, MatchRow
-│   ├── bracket/   ← BracketView
+│   ├── layout/    ← AppShell (header + logo + share button + layout)
+│   ├── groups/    ← GroupTable, MatchRow (stepper), GroupAccordion
+│   ├── bracket/   ← BracketView (espinha de peixe), BracketMinimap
+│   ├── stats/     ← CommunityStats.tsx (export: CommunityStatsBar — pills horizontais)
 │   └── share/     ← ShareButton
 ├── data/          ← wc2026.ts (48 times, 12 grupos, fixtures FIFA 2026)
 └── lib/           ← query-client.ts
+```
+
+---
+
+## Tokens Tailwind (`tailwind.config.ts`)
+
+```typescript
+colors: {
+  wcp: {
+    bg:               '#f0f4f1',
+    surface:          '#ffffff',
+    'surface-subtle': '#e8f5ec',
+    primary:          '#00a854',
+    'primary-light':  '#00c866',
+    'primary-faint':  'rgba(0,200,102,0.08)',
+    text:             '#1a2a1a',
+    muted:            '#607060',
+    border:           'rgba(0,200,102,0.13)',
+  },
+},
 ```
 
 ---
@@ -60,6 +81,7 @@ src/
 - TDD obrigatório no engine (`superpowers:test-driven-development`)
 - MatchRow props-only — sem acesso direto ao store
 - Standings e bracket sempre derivados no render — nunca armazenados
+- `useMemo` em GroupAccordion para evitar recalcular 12 grupos + bracket por render
 - SOLID / DRY / KISS / YAGNI
 
 ---
@@ -69,8 +91,9 @@ src/
 - ✅ **Fase 1** — Engine FIFA (classifier, tiebreaker, bracket-generator) com TDD, ≥90% cobertura
 - ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
 - ✅ **Fase 3** — E2E & Estabilidade (Playwright 6 testes, CI verde, deploy GitHub Pages)
-- ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes, code review @claude aprovado
-- ✅ **Fase 5** — Community Stats: useCommunityStats + @libsql/client HTTP, tabela `team_stats` no Turso (aws-eu-west-1), sidebar "Favoritos da Comunidade" — 42 testes, @claude aprovado
+- ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes, @claude aprovado
+- ✅ **Fase 5** — Community Stats: useCommunityStats + @libsql/client HTTP, tabela `team_stats` no Turso (aws-eu-west-1) — 42 testes, @claude aprovado
+- ✅ **Fase 6** — Redesign Cyber Green Light: nova paleta, sem sidebar, accordion de grupos, stepper +/−, bracket espinha de peixe — 49 testes, @claude aprovado
 
 ---
 
@@ -99,27 +122,24 @@ git push -u origin feat/<nome>
 # 2. Desenvolver com commits incrementais
 git add <arquivos>
 git commit -m "feat: descrição"
-git push                                 # CI roda a cada push
+git push
 
 # 3. Abrir PR
 gh pr create --title "feat: descrição" --body "## Summary\n- ...\n\n## Test Plan\n- [ ] ..."
 
 # 4. Code review automatizado com @claude
 gh pr comment <número> --body "@claude please review this PR"
-# Monitorar novos comentários do PR (polling):
-#   gh pr view <número> --json comments --jq '.comments[-1].body'
-# Quando review chegar: ler, ajustar código, push, chamar @claude novamente
+# Monitorar: gh pr view <número> --json comments --jq '.comments[-1].body'
 # Repetir até @claude aprovar
 
 # 5. Após aprovação: Squash and Merge no GitHub
-# → GitHub deleta a branch automaticamente
 ```
 
 - Branches: `feat/`, `fix/`, `chore/`
 - Commits: convencional — `feat:`, `fix:`, `test:`, `chore:`, `docs:`
 - **Nunca commitar direto na `main`** — sempre via PR
-- Merge strategy: **Squash and Merge** (nunca merge commit ou rebase)
-- **Code review obrigatório via `@claude`** antes de mergear — ciclo iterativo até aprovação
+- Merge strategy: **Squash and Merge**
+- **Code review obrigatório via `@claude`** antes de mergear
 
 ---
 
@@ -131,14 +151,9 @@ gh pr comment <número> --body "@claude please review this PR"
 
 ---
 
-## Limpeza de Docs de Planejamento
-
-Apagar após cada fase concluída: `docs/specs/` e `docs/plans/`. Se houver decisão relevante não capturada aqui, resumir no CLAUDE.md antes de deletar.
-
----
-
 ## Contexto FIFA 2026
 
 - 48 seleções, 12 grupos de 4 — classificam os 2 primeiros + 8 melhores terceiros = 32 times
 - Bracket com chaves pré-definidas pela FIFA (não sorteio pós-grupos)
 - Critérios de desempate: H2H pts → H2H GD → H2H GF → GD geral → GF geral → ordem do sorteio
+- Vencedores das rodadas eliminatórias não são resolvidos automaticamente pelo engine (bracket é read-only após grupos)
