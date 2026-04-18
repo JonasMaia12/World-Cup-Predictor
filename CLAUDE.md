@@ -70,7 +70,7 @@ src/
 - ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
 - ✅ **Fase 3** — E2E & Estabilidade (Playwright 6 testes, CI verde, deploy GitHub Pages)
 - ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes, code review @claude aprovado
-- 🔲 **Fase 5** — Turso stats (useCommunityStats, Drizzle ORM, database `wcp2026` já criada em aws-eu-west-1) ← **PRÓXIMA**
+- ✅ **Fase 5** — Community Stats: useCommunityStats + @libsql/client HTTP, tabela `team_stats` no Turso (aws-eu-west-1), sidebar "Favoritos da Comunidade" — 42 testes, @claude aprovado
 
 ---
 
