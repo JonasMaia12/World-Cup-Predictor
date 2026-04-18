@@ -74,8 +74,8 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange }: MatchRo
           value={home}
           onIncrement={() => onScoreChange(match.id, home + 1, away)}
           onDecrement={() => home > 0 && onScoreChange(match.id, home - 1, away)}
-          testIdPlus="home-plus"
-          testIdMinus="home-minus"
+          testIdPlus={`home-plus-${match.id}`}
+          testIdMinus={`home-minus-${match.id}`}
           testIdValue={`score-home-${match.id}`}
         />
         <span className="text-wcp-primary font-bold px-1">×</span>
@@ -83,8 +83,8 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange }: MatchRo
           value={away}
           onIncrement={() => onScoreChange(match.id, home, away + 1)}
           onDecrement={() => away > 0 && onScoreChange(match.id, home, away - 1)}
-          testIdPlus="away-plus"
-          testIdMinus="away-minus"
+          testIdPlus={`away-plus-${match.id}`}
+          testIdMinus={`away-minus-${match.id}`}
           testIdValue={`score-away-${match.id}`}
         />
       </div>

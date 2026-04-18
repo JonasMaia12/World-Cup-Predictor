@@ -45,9 +45,10 @@ function ShareButton() {
   return (
     <button
       onClick={share}
+      data-testid="share-button"
       className="bg-wcp-primary text-white text-xs font-semibold rounded-full px-4 py-1.5 transition-opacity hover:opacity-90 active:opacity-75"
     >
-      {copied ? '✓ Copiado!' : '↗ Compartilhar'}
+      {copied ? 'Link copiado!' : '↗ Compartilhar'}
     </button>
   )
 }

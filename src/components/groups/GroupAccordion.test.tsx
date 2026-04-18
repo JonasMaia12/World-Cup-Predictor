@@ -44,9 +44,8 @@ describe('GroupAccordion', () => {
   it('calls toggleGroup when a header is clicked', async () => {
     const toggleGroup = vi.fn()
     const { useStore } = await import('@/store')
-    vi.mocked(useStore).mockImplementation((sel: (s: unknown) => unknown) =>
-      sel({ scores: {}, setScore: vi.fn(), openGroups: ['A'], toggleGroup })
-    )
+    vi.mocked(useStore).mockImplementation(((sel: (s: unknown) => unknown) =>
+      sel({ scores: {}, setScore: vi.fn(), openGroups: ['A'], toggleGroup })) as never)
     render(<GroupAccordion />)
     fireEvent.click(screen.getByText('GRUPO B'))
     expect(toggleGroup).toHaveBeenCalledWith('B')
