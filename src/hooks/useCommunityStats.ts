@@ -10,13 +10,14 @@ async function fetchCommunityStats(): Promise<TeamStat[]> {
     'SELECT team_code, champion_pct, top4_pct, top8_pct, total_votes, updated_at FROM team_stats ORDER BY champion_pct DESC'
   )
 
+  const idx = Object.fromEntries(result.columns.map((col, i) => [col, i]))
   return result.rows.map((row) => ({
-    teamCode:    row[0] as string,
-    championPct: row[1] as number,
-    top4Pct:     row[2] as number,
-    top8Pct:     row[3] as number,
-    totalVotes:  row[4] as number,
-    updatedAt:   row[5] as string,
+    teamCode:    row[idx.team_code]    as string,
+    championPct: row[idx.champion_pct] as number,
+    top4Pct:     row[idx.top4_pct]     as number,
+    top8Pct:     row[idx.top8_pct]     as number,
+    totalVotes:  row[idx.total_votes]  as number,
+    updatedAt:   row[idx.updated_at]   as string,
   }))
 }
 

@@ -16,6 +16,7 @@ function wrapper({ children }: { children: ReactNode }) {
   return createElement(QueryClientProvider, { client: qc }, children)
 }
 
+const mockColumns = ['team_code', 'champion_pct', 'top4_pct', 'top8_pct', 'total_votes', 'updated_at']
 const mockRows = [
   ['BRA', 42.5, 78.0, 90.0, 1000, '2026-04-18'],
   ['FRA', 15.2, 60.1, 82.3, 1000, '2026-04-18'],
@@ -36,7 +37,7 @@ describe('useCommunityStats', () => {
 
   it('returns stats when client resolves rows', async () => {
     vi.stubEnv('VITE_TURSO_URL', 'https://test.turso.io')
-    const mockExecute = vi.fn().mockResolvedValue({ rows: mockRows })
+    const mockExecute = vi.fn().mockResolvedValue({ columns: mockColumns, rows: mockRows })
     vi.mocked(getDbClient).mockReturnValue({ execute: mockExecute } as never)
 
     const { result } = renderHook(() => useCommunityStats(), { wrapper })

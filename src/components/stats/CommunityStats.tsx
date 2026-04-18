@@ -3,11 +3,11 @@ import { useCommunityStats } from '@/hooks/useCommunityStats'
 export function CommunityStats() {
   const { data, isLoading, isError } = useCommunityStats()
 
-  if (!import.meta.env.VITE_TURSO_URL) return null
   if (isLoading) return <p className="px-3 py-2 text-xs text-wcp-text/50">Carregando stats...</p>
   if (isError || !data?.length) return null
 
   const top5 = data.slice(0, 5)
+  // total_votes é um agregado global igual para todas as linhas
   const totalVotes = data[0]?.totalVotes ?? 0
 
   return (
