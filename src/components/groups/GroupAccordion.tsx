@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useStore } from '@/store'
 import { GROUPS } from '@/data/wc2026'
 import { classifyGroup } from '@/engine/classifier'
@@ -14,11 +15,14 @@ export function GroupAccordion() {
   const openGroups = useStore((s) => s.openGroups)
   const toggleGroup = useStore((s) => s.toggleGroup)
 
-  const allStandings: GroupStandings = {}
-  for (const group of GROUPS) {
-    allStandings[group.id] = classifyGroup(group, scores)
-  }
-  const bracket = generateBracket(allStandings)
+  const allStandings = useMemo(() => {
+    const result: GroupStandings = {}
+    for (const group of GROUPS) {
+      result[group.id] = classifyGroup(group, scores)
+    }
+    return result
+  }, [scores])
+  const bracket = useMemo(() => generateBracket(allStandings), [allStandings])
 
   return (
     <div className="max-w-2xl mx-auto w-full px-4 py-4 space-y-2">

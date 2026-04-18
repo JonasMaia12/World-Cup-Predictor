@@ -11,7 +11,7 @@ interface BracketMinimapProps {
 
 const ROUNDS: { key: Round; label: string }[] = [
   { key: 'roundOf32',     label: 'Oitavas' },
-  { key: 'roundOf16',     label: 'Quartas-Oitavas' },
+  { key: 'roundOf16',     label: 'R16' },
   { key: 'quarterFinals', label: 'Quartos' },
   { key: 'semiFinals',    label: 'Semis' },
   { key: 'final',         label: 'Final' },
