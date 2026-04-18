@@ -18,27 +18,50 @@ describe('MatchRow', () => {
     expect(screen.getByText('RSA')).toBeInTheDocument()
   })
 
-  it('renders two number inputs', () => {
+  it('renders current scores', () => {
     render(<MatchRow match={match} homeScore={2} awayScore={1} onScoreChange={vi.fn()} />)
-    const inputs = screen.getAllByRole('spinbutton')
-    expect(inputs).toHaveLength(2)
-    expect(inputs[0]).toHaveValue(2)
-    expect(inputs[1]).toHaveValue(1)
+    expect(screen.getByTestId('score-home-A1')).toHaveTextContent('2')
+    expect(screen.getByTestId('score-away-A1')).toHaveTextContent('1')
   })
 
-  it('calls onScoreChange with matchId and new values when home input changes', () => {
-    const onScoreChange = vi.fn()
-    render(<MatchRow match={match} homeScore={0} awayScore={0} onScoreChange={onScoreChange} />)
-    const [homeInput] = screen.getAllByRole('spinbutton')
-    fireEvent.change(homeInput, { target: { value: '3' } })
-    expect(onScoreChange).toHaveBeenCalledWith('A1', 3, 0)
+  it('shows 0 when score is undefined', () => {
+    render(<MatchRow match={match} homeScore={undefined} awayScore={undefined} onScoreChange={vi.fn()} />)
+    expect(screen.getByTestId('score-home-A1')).toHaveTextContent('0')
+    expect(screen.getByTestId('score-away-A1')).toHaveTextContent('0')
   })
 
-  it('calls onScoreChange with matchId and new values when away input changes', () => {
+  it('increments home score when + clicked', () => {
     const onScoreChange = vi.fn()
     render(<MatchRow match={match} homeScore={1} awayScore={0} onScoreChange={onScoreChange} />)
-    const [, awayInput] = screen.getAllByRole('spinbutton')
-    fireEvent.change(awayInput, { target: { value: '2' } })
-    expect(onScoreChange).toHaveBeenCalledWith('A1', 1, 2)
+    fireEvent.click(screen.getByTestId('home-plus'))
+    expect(onScoreChange).toHaveBeenCalledWith('A1', 2, 0)
+  })
+
+  it('decrements home score when − clicked', () => {
+    const onScoreChange = vi.fn()
+    render(<MatchRow match={match} homeScore={2} awayScore={1} onScoreChange={onScoreChange} />)
+    fireEvent.click(screen.getByTestId('home-minus'))
+    expect(onScoreChange).toHaveBeenCalledWith('A1', 1, 1)
+  })
+
+  it('does not decrement below 0', () => {
+    const onScoreChange = vi.fn()
+    render(<MatchRow match={match} homeScore={0} awayScore={0} onScoreChange={onScoreChange} />)
+    fireEvent.click(screen.getByTestId('home-minus'))
+    expect(onScoreChange).not.toHaveBeenCalled()
+  })
+
+  it('increments away score when + clicked', () => {
+    const onScoreChange = vi.fn()
+    render(<MatchRow match={match} homeScore={0} awayScore={0} onScoreChange={onScoreChange} />)
+    fireEvent.click(screen.getByTestId('away-plus'))
+    expect(onScoreChange).toHaveBeenCalledWith('A1', 0, 1)
+  })
+
+  it('decrements away score when − clicked', () => {
+    const onScoreChange = vi.fn()
+    render(<MatchRow match={match} homeScore={0} awayScore={2} onScoreChange={onScoreChange} />)
+    fireEvent.click(screen.getByTestId('away-minus'))
+    expect(onScoreChange).toHaveBeenCalledWith('A1', 0, 1)
   })
 })
