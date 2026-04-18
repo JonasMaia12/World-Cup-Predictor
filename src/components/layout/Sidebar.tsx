@@ -1,5 +1,6 @@
 import { useStore } from '@/store'
 import { cn } from '@/lib/utils'
+import { CommunityStats } from '@/components/stats/CommunityStats'
 
 const GROUP_IDS = ['A','B','C','D','E','F','G','H','I','J','K','L']
 
@@ -44,6 +45,9 @@ export function Sidebar() {
           🏆 Bracket
         </button>
       </nav>
+      <div className="border-t border-wcp-border">
+        <CommunityStats />
+      </div>
     </aside>
   )
 }
