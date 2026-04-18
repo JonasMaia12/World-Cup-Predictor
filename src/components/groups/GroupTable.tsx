@@ -13,19 +13,16 @@ export function GroupTable({ groupId }: GroupTableProps) {
 
   const scores = useStore((s) => s.scores)
   const setScore = useStore((s) => s.setScore)
-
   const standings = classifyGroup(group, scores)
   const fixtures = FIXTURES.filter((f) => f.group === groupId)
 
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-2xl mx-auto w-full">
-      <h2 className="text-wcp-gold font-bold text-lg tracking-wide">Grupo {groupId}</h2>
-
+    <div className="flex flex-col gap-4">
       {/* Standings table */}
       <div className="rounded-lg overflow-hidden border border-wcp-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-wcp-sidebar text-wcp-muted text-xs uppercase tracking-wide">
+            <tr className="bg-wcp-surface-subtle text-wcp-muted text-[10px] uppercase tracking-wide">
               <th className="text-left px-3 py-2">#</th>
               <th className="text-left px-3 py-2">Seleção</th>
               <th className="px-2 py-2 text-center">J</th>
@@ -34,7 +31,7 @@ export function GroupTable({ groupId }: GroupTableProps) {
               <th className="px-2 py-2 text-center">P</th>
               <th className="px-2 py-2 text-center">SG</th>
               <th className="px-2 py-2 text-center">GP</th>
-              <th className="px-2 py-2 text-center font-bold text-wcp-gold">PTS</th>
+              <th className="px-2 py-2 text-center font-bold text-wcp-primary">PTS</th>
             </tr>
           </thead>
           <tbody>
@@ -48,7 +45,7 @@ export function GroupTable({ groupId }: GroupTableProps) {
                 >
                   <td className="px-3 py-2 text-center">
                     {qualifies ? (
-                      <span className="text-wcp-gold font-bold">{idx + 1}</span>
+                      <span className="text-wcp-primary font-bold">{idx + 1}</span>
                     ) : (
                       <span>{idx + 1}</span>
                     )}
@@ -64,7 +61,7 @@ export function GroupTable({ groupId }: GroupTableProps) {
                     {s.goalDiff > 0 ? `+${s.goalDiff}` : s.goalDiff}
                   </td>
                   <td className="px-2 py-2 text-center">{s.goalsFor}</td>
-                  <td className="px-2 py-2 text-center font-bold text-wcp-gold">{s.points}</td>
+                  <td className="px-2 py-2 text-center font-bold text-wcp-primary">{s.points}</td>
                 </tr>
               )
             })}
@@ -73,8 +70,8 @@ export function GroupTable({ groupId }: GroupTableProps) {
       </div>
 
       {/* Match list */}
-      <div className="flex flex-col gap-1">
-        <h3 className="text-wcp-muted text-xs uppercase tracking-wide mb-1">Jogos</h3>
+      <div className="flex flex-col gap-2">
+        <h3 className="text-wcp-muted text-[10px] tracking-widest uppercase">Jogos</h3>
         {fixtures.map((match) => (
           <MatchRow
             key={match.id}
