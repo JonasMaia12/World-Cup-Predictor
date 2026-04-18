@@ -10,12 +10,15 @@ const config: Config = {
     extend: {
       colors: {
         wcp: {
-          bg:      '#0c0a00',
-          sidebar: '#1a1500',
-          gold:    '#f59e0b',
-          text:    '#fef3c7',
-          border:  '#78350f',
-          muted:   '#92400e',
+          bg:             '#f0f4f1',
+          surface:        '#ffffff',
+          'surface-subtle': '#e8f5ec',
+          primary:        '#00a854',
+          'primary-light': '#00c866',
+          'primary-faint': 'rgba(0,200,102,0.08)',
+          text:           '#1a2a1a',
+          muted:          '#607060',
+          border:         'rgba(0,200,102,0.13)',
         },
       },
     },
