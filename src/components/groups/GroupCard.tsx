@@ -11,16 +11,13 @@ interface GroupCardProps {
 
 export function GroupCard({ groupId, onClick }: GroupCardProps) {
   const scores = useStore((s) => s.scores)
+  const standings = useMemo(() => {
+    const g = GROUPS.find((grp) => grp.id === groupId)
+    return g ? classifyGroup(g, scores) : []
+  }, [groupId, scores])
   const group = GROUPS.find((g) => g.id === groupId)
   if (!group) return null
 
-  const standings = useMemo(
-    () => {
-      const g = GROUPS.find((grp) => grp.id === groupId)
-      return g ? classifyGroup(g, scores) : []
-    },
-    [groupId, scores]
-  )
   const fixtures = FIXTURES.filter((f) => f.group === groupId)
   const filledCount = fixtures.filter((f) => scores[f.id] !== undefined).length
   const isComplete = filledCount === fixtures.length
