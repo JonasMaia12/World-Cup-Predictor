@@ -95,6 +95,7 @@ colors: {
 - ✅ **Fase 5** — Community Stats: useCommunityStats + @libsql/client HTTP, tabela `team_stats` no Turso (aws-eu-west-1) — 42 testes, @claude aprovado
 - ✅ **Fase 6** — Redesign Cyber Green Light: nova paleta, sem sidebar, accordion de grupos, stepper +/−, bracket espinha de peixe — 49 testes, @claude aprovado
 - ✅ **Fase 7** — UX Improvements: GroupGrid responsivo (1→4 cols), MatchModal gamificado com reveal progressivo, bracket overflow fix + clamp() responsivo — 69 testes, build limpo
+- ✅ **Fase 8** — MatchModal accordion puro: todos os 6 jogos visíveis desde o início, collapse header por jogo, sem auto-advance; MatchRow compact distingue preenchido (✓) de vazio (›) — 71 testes, @claude aprovado
 
 ---
 

@@ -32,3 +32,6 @@ dist-ssr
 
 # Git worktrees
 .worktrees/
+
+# Playwright MCP / Conductor session artifacts
+.conductor/
