@@ -11,7 +11,7 @@ function TeamSlot({ code }: { code: string | null }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-1.5 px-2 py-1.5 rounded text-xs',
+        'flex items-center gap-1.5 px-2 py-1.5 rounded text-sm',
         code ? 'text-wcp-text' : 'text-wcp-muted',
       )}
     >
@@ -31,7 +31,8 @@ function MatchCard({ match }: { match: BracketMatch }) {
   return (
     <div
       data-testid={`bracket-match-${match.id}`}
-      className="bg-wcp-surface border border-wcp-border rounded-lg overflow-hidden min-w-[110px]"
+      className="bg-wcp-surface border border-wcp-border rounded-lg overflow-hidden"
+      style={{ minWidth: 'clamp(110px, 11vw, 150px)' }}
     >
       <TeamSlot code={match.home} />
       <div className="h-px bg-wcp-border mx-2" />
@@ -49,7 +50,7 @@ function RoundColumn({
 }) {
   return (
     <div className="flex flex-col gap-1.5 items-center">
-      <span className="text-[8px] text-wcp-muted tracking-[2px] uppercase mb-1">{title}</span>
+      <span className="text-[10px] text-wcp-muted tracking-[2px] uppercase mb-1">{title}</span>
       <div className="flex flex-col gap-1.5">
         {matches.map((m) => (
           <MatchCard key={m.id} match={m} />
@@ -70,8 +71,8 @@ function DesktopBracket({ bracket }: { bracket: Bracket }) {
   const rightSF  = bracket.semiFinals.slice(2)
 
   return (
-    <div className="overflow-x-auto py-4 px-2">
-      <div className="flex items-center justify-center gap-2 min-w-[900px]">
+    <div className="overflow-x-auto py-4 px-4">
+      <div className="flex items-center justify-center min-w-fit" style={{ gap: 'clamp(12px, 2vw, 32px)' }}>
         <RoundColumn title="Oitavas" matches={leftR32} />
         <RoundColumn title="R16" matches={leftR16} />
         <RoundColumn title="Quartos" matches={leftQF} />
