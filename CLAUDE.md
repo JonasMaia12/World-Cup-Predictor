@@ -22,7 +22,7 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 ## Decisões de Design
 
 - Sem auth no MVP — brackets salvos via LocalStorage
-- Layout: coluna única full-width — Header → CommunityStatsBar → GroupAccordion → Bracket
+- Layout: coluna única full-width — Header → CommunityStatsBar → GroupGrid (cards responsivos) → Bracket
 - Bracket: "espinha de peixe" convergindo para o centro (Final); mobile = minimap + cards por rodada
 - Tema: **Cyber Green Light** — fundo `#f0f4f1`, verde neon `#00a854`, texto `#1a2a1a`
 - Estado: Zustand + TanStack Query — sem Context API ou Redux
@@ -45,7 +45,7 @@ src/
 ├── hooks/         ← useShareLink, useH2H (TanStack Query), useCommunityStats
 ├── components/
 │   ├── layout/    ← AppShell (header + logo + share button + layout)
-│   ├── groups/    ← GroupTable, MatchRow (stepper), GroupAccordion
+│   ├── groups/    ← GroupCard, GroupGrid, MatchModal, MatchRow (stepper)
 │   ├── bracket/   ← BracketView (espinha de peixe), BracketMinimap
 │   ├── stats/     ← CommunityStats.tsx (export: CommunityStatsBar — pills horizontais)
 │   └── share/     ← ShareButton
@@ -94,6 +94,7 @@ colors: {
 - ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes, @claude aprovado
 - ✅ **Fase 5** — Community Stats: useCommunityStats + @libsql/client HTTP, tabela `team_stats` no Turso (aws-eu-west-1) — 42 testes, @claude aprovado
 - ✅ **Fase 6** — Redesign Cyber Green Light: nova paleta, sem sidebar, accordion de grupos, stepper +/−, bracket espinha de peixe — 49 testes, @claude aprovado
+- ✅ **Fase 7** — UX Improvements: GroupGrid responsivo (1→4 cols), MatchModal gamificado com reveal progressivo, bracket overflow fix + clamp() responsivo — 69 testes, build limpo
 
 ---
 
