@@ -1,4 +1,4 @@
-import { GroupAccordion } from '@/components/groups/GroupAccordion'
+import { GroupGrid } from '@/components/groups/GroupGrid'
 import { CommunityStatsBar } from '@/components/stats/CommunityStats'
 import { useShareLink } from '@/hooks/useShareLink'
 
@@ -64,7 +64,7 @@ export function AppShell() {
       <CommunityStatsBar />
 
       <main className="flex-1 overflow-y-auto">
-        <GroupAccordion />
+        <GroupGrid />
       </main>
     </div>
   )
