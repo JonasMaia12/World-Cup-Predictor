@@ -9,6 +9,8 @@ const match: Match = {
   homeTeam: 'MEX',
   awayTeam: 'RSA',
   stage: 'group',
+  date: '2026-06-11T23:00:00Z',
+  venue: 'AT&T Stadium, Dallas',
 }
 
 describe('MatchRow', () => {
