@@ -21,11 +21,8 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
   const filledCount = fixtures.filter((f) => scores[f.id] !== undefined).length
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
+  // Safe: modal is always unmounted/remounted on open, so initial state is always fresh.
   const [expandedIndex, setExpandedIndex] = useState(firstUnfilledIdx)
-
-  const handleScoreChange = (matchId: string, home: number, away: number) => {
-    setScore(matchId, home, away)
-  }
 
   const toggleExpand = (idx: number) => {
     setExpandedIndex((prev) => (prev === idx ? -1 : idx))
@@ -93,7 +90,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
                     match={match}
                     homeScore={scores[match.id]?.home}
                     awayScore={scores[match.id]?.away}
-                    onScoreChange={handleScoreChange}
+                    onScoreChange={setScore}
                   />
                 </div>
               )
@@ -105,7 +102,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
                 match={match}
                 homeScore={scores[match.id]?.home}
                 awayScore={scores[match.id]?.away}
-                onScoreChange={handleScoreChange}
+                onScoreChange={setScore}
                 compact
                 onClick={() => toggleExpand(idx)}
               />
