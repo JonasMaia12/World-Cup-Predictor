@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MatchModal } from './MatchModal'
+import { useStore } from '@/store'
 
 const mockSetScore = vi.fn()
 let mockScores: Record<string, { home: number; away: number }> = {}
@@ -31,6 +32,9 @@ vi.mock('@/data/wc2026', () => ({
 beforeEach(() => {
   mockScores = {}
   mockSetScore.mockClear()
+  vi.mocked(useStore).mockImplementation((sel: (s: unknown) => unknown) =>
+    sel({ scores: mockScores, setScore: mockSetScore })
+  )
 })
 
 describe('MatchModal', () => {

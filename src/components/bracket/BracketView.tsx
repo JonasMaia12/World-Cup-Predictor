@@ -83,11 +83,6 @@ function DesktopBracket({ bracket }: { bracket: Bracket }) {
           <div className="border-2 border-wcp-primary rounded-xl overflow-hidden">
             <MatchCard match={bracket.final} />
           </div>
-          {bracket.final.home && (
-            <div className="bg-wcp-primary text-white text-[9px] font-bold px-3 py-1 rounded-full">
-              🏆 {bracket.final.home}
-            </div>
-          )}
         </div>
 
         <RoundColumn title="Semis" matches={rightSF} />

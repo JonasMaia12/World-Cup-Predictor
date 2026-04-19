@@ -8,7 +8,7 @@ import { MatchModal } from './MatchModal'
 import { BracketView } from '@/components/bracket/BracketView'
 import type { GroupStandings } from '@/engine/types'
 
-const GROUP_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
+const GROUP_IDS = GROUPS.map((g) => g.id)
 
 export function GroupGrid() {
   const scores = useStore((s) => s.scores)
