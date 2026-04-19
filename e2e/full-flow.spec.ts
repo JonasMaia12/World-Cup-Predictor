@@ -23,12 +23,9 @@ async function ensureExpanded(page: Page, matchId: string) {
 
 // Fill scores for a group inside the open modal.
 // Keys are match IDs, values are [home, away].
-// The first stepper click on an unscored match triggers progressive reveal (match becomes compact).
-// We must re-expand compact matches to continue clicking steppers.
+// Matches start collapsed in accordion mode; ensureExpanded opens them before clicking steppers.
 async function fillGroupScores(page: Page, scores: Record<string, [number, number]>) {
   for (const [matchId, [home, away]] of Object.entries(scores)) {
-    // First click sets the score (unscored → scored) and may make match compact
-    // Subsequent clicks require re-expanding first
     for (let i = 0; i < home; i++) {
       await ensureExpanded(page, matchId)
       await page.getByTestId(`home-plus-${matchId}`).click()
@@ -37,8 +34,6 @@ async function fillGroupScores(page: Page, scores: Record<string, [number, numbe
       await ensureExpanded(page, matchId)
       await page.getByTestId(`away-plus-${matchId}`).click()
     }
-    // If score is [0, 0] (i.e., no clicks), match stays unscored — skip
-    // After scoring, next match reveals (if any). Wait briefly.
     await page.waitForTimeout(50)
   }
 }
@@ -137,21 +132,26 @@ test('Bracket — A, C, D classifiers in correct R32 slots', async ({ page }) =>
   await expect(page.getByTestId('bracket-match-r32-4').first()).toContainText('MAR')
 })
 
-test('Group card opens modal with progressive reveal', async ({ page }) => {
-  // Open group A modal
+test('Group card opens modal with accordion — all matches visible', async ({ page }) => {
   await openGroupModal(page, 'A')
 
   // First match (A1) is expanded — steppers visible
   await expect(page.getByTestId('home-plus-A1')).toBeVisible()
 
-  // Second match not yet visible
-  await expect(page.getByTestId('home-plus-A2')).not.toBeVisible()
+  // All other matches are collapsed but visible (compact rows present)
+  await expect(page.getByTestId('compact-A2')).toBeVisible()
+  await expect(page.getByTestId('compact-A6')).toBeVisible()
 
-  // Score first match — second reveals
-  await page.getByTestId('home-plus-A1').click()
-  await expect(page.getByTestId('home-plus-A2')).toBeVisible()
+  // Click A3 — A3 expands, A1 collapses
+  await page.getByTestId('compact-A3').click()
+  await expect(page.getByTestId('home-plus-A3')).toBeVisible()
+  await expect(page.getByTestId('compact-A1')).toBeVisible()
 
-  // Close modal — progress badge updates
+  // Score A3 — no auto-advance, A3 stays expanded
+  await page.getByTestId('home-plus-A3').click()
+  await expect(page.getByTestId('home-plus-A3')).toBeVisible()
+
+  // Close modal — progress badge updates (1 scored out of 6)
   await closeModal(page)
   await expect(page.getByTestId('group-card-A')).toContainText('1/6')
 })
