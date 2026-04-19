@@ -138,14 +138,15 @@ test('Group card opens modal with accordion — all matches visible', async ({ p
   // First match (A1) is expanded — steppers visible
   await expect(page.getByTestId('home-plus-A1')).toBeVisible()
 
-  // All other matches are collapsed but visible (compact rows present)
+  // All other matches are collapsed but visible (A6 is the last — verifies all 6 are rendered)
   await expect(page.getByTestId('compact-A2')).toBeVisible()
   await expect(page.getByTestId('compact-A6')).toBeVisible()
 
-  // Click A3 — A3 expands, A1 collapses
+  // Click A3 — A3 expands, A1 collapses (mutual exclusivity)
   await page.getByTestId('compact-A3').click()
   await expect(page.getByTestId('home-plus-A3')).toBeVisible()
   await expect(page.getByTestId('compact-A1')).toBeVisible()
+  await expect(page.getByTestId('home-plus-A1')).not.toBeVisible()
 
   // Score A3 — no auto-advance, A3 stays expanded
   await page.getByTestId('home-plus-A3').click()
