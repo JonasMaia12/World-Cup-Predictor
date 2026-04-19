@@ -5,6 +5,7 @@ export interface Team {
   name: string
   flag: string
   group: string
+  rank: number
 }
 
 export interface Match {
@@ -22,65 +23,65 @@ export interface Group {
 
 export const TEAMS: Team[] = [
   // Group A
-  { code: 'MEX', name: 'México',        flag: '🇲🇽', group: 'A' },
-  { code: 'RSA', name: 'África do Sul', flag: '🇿🇦', group: 'A' },
-  { code: 'KOR', name: 'Coreia do Sul', flag: '🇰🇷', group: 'A' },
-  { code: 'CZE', name: 'Tchéquia',      flag: '🇨🇿', group: 'A' },
+  { code: 'MEX', name: 'México',          flag: '🇲🇽', group: 'A', rank: 14 },
+  { code: 'RSA', name: 'África do Sul',   flag: '🇿🇦', group: 'A', rank: 68 },
+  { code: 'KOR', name: 'Coreia do Sul',   flag: '🇰🇷', group: 'A', rank: 22 },
+  { code: 'CZE', name: 'Tchéquia',        flag: '🇨🇿', group: 'A', rank: 36 },
   // Group B
-  { code: 'CAN', name: 'Canadá',        flag: '🇨🇦', group: 'B' },
-  { code: 'BIH', name: 'Bósnia e Herz.',flag: '🇧🇦', group: 'B' },
-  { code: 'QAT', name: 'Catar',         flag: '🇶🇦', group: 'B' },
-  { code: 'SUI', name: 'Suíça',         flag: '🇨🇭', group: 'B' },
+  { code: 'CAN', name: 'Canadá',          flag: '🇨🇦', group: 'B', rank: 46 },
+  { code: 'BIH', name: 'Bósnia e Herz.',  flag: '🇧🇦', group: 'B', rank: 66 },
+  { code: 'QAT', name: 'Catar',           flag: '🇶🇦', group: 'B', rank: 37 },
+  { code: 'SUI', name: 'Suíça',           flag: '🇨🇭', group: 'B', rank: 16 },
   // Group C
-  { code: 'BRA', name: 'Brasil',        flag: '🇧🇷', group: 'C' },
-  { code: 'MAR', name: 'Marrocos',      flag: '🇲🇦', group: 'C' },
-  { code: 'HAI', name: 'Haiti',         flag: '🇭🇹', group: 'C' },
-  { code: 'SCO', name: 'Escócia',       flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', group: 'C' },
+  { code: 'BRA', name: 'Brasil',          flag: '🇧🇷', group: 'C', rank: 4  },
+  { code: 'MAR', name: 'Marrocos',        flag: '🇲🇦', group: 'C', rank: 13 },
+  { code: 'HAI', name: 'Haiti',           flag: '🇭🇹', group: 'C', rank: 156},
+  { code: 'SCO', name: 'Escócia',         flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', group: 'C', rank: 33 },
   // Group D
-  { code: 'USA', name: 'Estados Unidos',flag: '🇺🇸', group: 'D' },
-  { code: 'PAR', name: 'Paraguai',      flag: '🇵🇾', group: 'D' },
-  { code: 'AUS', name: 'Austrália',     flag: '🇦🇺', group: 'D' },
-  { code: 'TUR', name: 'Turquia',       flag: '🇹🇷', group: 'D' },
+  { code: 'USA', name: 'Estados Unidos',  flag: '🇺🇸', group: 'D', rank: 11 },
+  { code: 'PAR', name: 'Paraguai',        flag: '🇵🇾', group: 'D', rank: 63 },
+  { code: 'AUS', name: 'Austrália',       flag: '🇦🇺', group: 'D', rank: 25 },
+  { code: 'TUR', name: 'Turquia',         flag: '🇹🇷', group: 'D', rank: 30 },
   // Group E
-  { code: 'GER', name: 'Alemanha',      flag: '🇩🇪', group: 'E' },
-  { code: 'CUW', name: 'Curaçao',       flag: '🇨🇼', group: 'E' },
-  { code: 'CIV', name: 'Costa do Marfim',flag:'🇨🇮', group: 'E' },
-  { code: 'ECU', name: 'Equador',       flag: '🇪🇨', group: 'E' },
+  { code: 'GER', name: 'Alemanha',        flag: '🇩🇪', group: 'E', rank: 10 },
+  { code: 'CUW', name: 'Curaçao',         flag: '🇨🇼', group: 'E', rank: 86 },
+  { code: 'CIV', name: 'Costa do Marfim', flag: '🇨🇮', group: 'E', rank: 55 },
+  { code: 'ECU', name: 'Equador',         flag: '🇪🇨', group: 'E', rank: 26 },
   // Group F
-  { code: 'NED', name: 'Holanda',       flag: '🇳🇱', group: 'F' },
-  { code: 'JPN', name: 'Japão',         flag: '🇯🇵', group: 'F' },
-  { code: 'SWE', name: 'Suécia',        flag: '🇸🇪', group: 'F' },
-  { code: 'TUN', name: 'Tunísia',       flag: '🇹🇳', group: 'F' },
+  { code: 'NED', name: 'Holanda',         flag: '🇳🇱', group: 'F', rank: 7  },
+  { code: 'JPN', name: 'Japão',           flag: '🇯🇵', group: 'F', rank: 15 },
+  { code: 'SWE', name: 'Suécia',          flag: '🇸🇪', group: 'F', rank: 28 },
+  { code: 'TUN', name: 'Tunísia',         flag: '🇹🇳', group: 'F', rank: 29 },
   // Group G
-  { code: 'BEL', name: 'Bélgica',       flag: '🇧🇪', group: 'G' },
-  { code: 'EGY', name: 'Egito',         flag: '🇪🇬', group: 'G' },
-  { code: 'IRN', name: 'Irã',           flag: '🇮🇷', group: 'G' },
-  { code: 'NZL', name: 'Nova Zelândia', flag: '🇳🇿', group: 'G' },
+  { code: 'BEL', name: 'Bélgica',         flag: '🇧🇪', group: 'G', rank: 8  },
+  { code: 'EGY', name: 'Egito',           flag: '🇪🇬', group: 'G', rank: 38 },
+  { code: 'IRN', name: 'Irã',             flag: '🇮🇷', group: 'G', rank: 21 },
+  { code: 'NZL', name: 'Nova Zelândia',   flag: '🇳🇿', group: 'G', rank: 97 },
   // Group H
-  { code: 'ESP', name: 'Espanha',       flag: '🇪🇸', group: 'H' },
-  { code: 'CPV', name: 'Cabo Verde',    flag: '🇨🇻', group: 'H' },
-  { code: 'KSA', name: 'Arábia Saudita',flag: '🇸🇦', group: 'H' },
-  { code: 'URU', name: 'Uruguai',       flag: '🇺🇾', group: 'H' },
+  { code: 'ESP', name: 'Espanha',         flag: '🇪🇸', group: 'H', rank: 5  },
+  { code: 'CPV', name: 'Cabo Verde',      flag: '🇨🇻', group: 'H', rank: 80 },
+  { code: 'KSA', name: 'Arábia Saudita',  flag: '🇸🇦', group: 'H', rank: 61 },
+  { code: 'URU', name: 'Uruguai',         flag: '🇺🇾', group: 'H', rank: 12 },
   // Group I
-  { code: 'FRA', name: 'França',        flag: '🇫🇷', group: 'I' },
-  { code: 'SEN', name: 'Senegal',       flag: '🇸🇳', group: 'I' },
-  { code: 'NOR', name: 'Noruega',       flag: '🇳🇴', group: 'I' },
-  { code: 'IRQ', name: 'Iraque',        flag: '🇮🇶', group: 'I' },
+  { code: 'FRA', name: 'França',          flag: '🇫🇷', group: 'I', rank: 2  },
+  { code: 'SEN', name: 'Senegal',         flag: '🇸🇳', group: 'I', rank: 17 },
+  { code: 'NOR', name: 'Noruega',         flag: '🇳🇴', group: 'I', rank: 34 },
+  { code: 'IRQ', name: 'Iraque',          flag: '🇮🇶', group: 'I', rank: 73 },
   // Group J
-  { code: 'ARG', name: 'Argentina',     flag: '🇦🇷', group: 'J' },
-  { code: 'ALG', name: 'Argélia',       flag: '🇩🇿', group: 'J' },
-  { code: 'AUT', name: 'Áustria',       flag: '🇦🇹', group: 'J' },
-  { code: 'JOR', name: 'Jordânia',      flag: '🇯🇴', group: 'J' },
+  { code: 'ARG', name: 'Argentina',       flag: '🇦🇷', group: 'J', rank: 1  },
+  { code: 'ALG', name: 'Argélia',         flag: '🇩🇿', group: 'J', rank: 42 },
+  { code: 'AUT', name: 'Áustria',         flag: '🇦🇹', group: 'J', rank: 27 },
+  { code: 'JOR', name: 'Jordânia',        flag: '🇯🇴', group: 'J', rank: 88 },
   // Group K
-  { code: 'POR', name: 'Portugal',      flag: '🇵🇹', group: 'K' },
-  { code: 'COD', name: 'RD Congo',      flag: '🇨🇩', group: 'K' },
-  { code: 'UZB', name: 'Uzbequistão',   flag: '🇺🇿', group: 'K' },
-  { code: 'COL', name: 'Colômbia',      flag: '🇨🇴', group: 'K' },
+  { code: 'POR', name: 'Portugal',        flag: '🇵🇹', group: 'K', rank: 6  },
+  { code: 'COD', name: 'RD Congo',        flag: '🇨🇩', group: 'K', rank: 70 },
+  { code: 'UZB', name: 'Uzbequistão',     flag: '🇺🇿', group: 'K', rank: 118},
+  { code: 'COL', name: 'Colômbia',        flag: '🇨🇴', group: 'K', rank: 9  },
   // Group L
-  { code: 'ENG', name: 'Inglaterra',    flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', group: 'L' },
-  { code: 'CRO', name: 'Croácia',       flag: '🇭🇷', group: 'L' },
-  { code: 'GHA', name: 'Gana',          flag: '🇬🇭', group: 'L' },
-  { code: 'PAN', name: 'Panamá',        flag: '🇵🇦', group: 'L' },
+  { code: 'ENG', name: 'Inglaterra',      flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', group: 'L', rank: 3  },
+  { code: 'CRO', name: 'Croácia',         flag: '🇭🇷', group: 'L', rank: 18 },
+  { code: 'GHA', name: 'Gana',            flag: '🇬🇭', group: 'L', rank: 58 },
+  { code: 'PAN', name: 'Panamá',          flag: '🇵🇦', group: 'L', rank: 78 },
 ]
 
 export const GROUPS: Group[] = [
