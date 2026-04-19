@@ -46,6 +46,7 @@ function SimulateButton() {
     <button
       onClick={simulateMissing}
       data-testid="simulate-button"
+      title="Preenche apenas os jogos em branco com simulação automática"
       className="border border-wcp-primary text-wcp-primary text-xs font-semibold rounded-full px-4 py-1.5 transition-opacity hover:opacity-75 active:opacity-50"
     >
       🎲 Simular
