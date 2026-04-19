@@ -7,6 +7,7 @@ interface MatchRowProps {
   homeScore: number | undefined
   awayScore: number | undefined
   onScoreChange: (matchId: string, home: number, away: number) => void
+  onClearScore?: (matchId: string) => void
   compact?: boolean
   onClick?: () => void
 }
@@ -58,7 +59,7 @@ function Stepper({
   )
 }
 
-export function MatchRow({ match, homeScore, awayScore, onScoreChange, compact, onClick }: MatchRowProps) {
+export function MatchRow({ match, homeScore, awayScore, onScoreChange, onClearScore, compact, onClick }: MatchRowProps) {
   const home = homeScore ?? 0
   const away = awayScore ?? 0
   const homeTeam = TEAMS.find((t) => t.code === match.homeTeam)
@@ -68,26 +69,42 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, compact, 
     const hasSco = homeScore !== undefined
     const scoreLabel = hasSco ? `${home} × ${away}` : '– × –'
     const indicator = hasSco ? '✓' : '›'
+    const showClear = hasSco && onClearScore !== undefined
 
     return (
-      <button
-        onClick={onClick}
-        data-testid={`compact-${match.id}`}
-        className="w-full flex items-center justify-between bg-wcp-surface border border-wcp-border rounded-xl px-4 py-2 gap-2 hover:bg-wcp-primary-faint transition-colors"
-      >
-        <div className="flex items-center gap-2 flex-1">
-          <span className="text-lg leading-none">{homeTeam?.flag}</span>
-          <span className="text-xs font-semibold text-wcp-text">{match.homeTeam}</span>
-        </div>
-        <span className="text-sm font-bold text-wcp-text tabular-nums">{scoreLabel}</span>
-        <div className="flex items-center gap-2 flex-1 justify-end">
-          <span className="text-xs font-semibold text-wcp-text">{match.awayTeam}</span>
-          <span className="text-lg leading-none">{awayTeam?.flag}</span>
-        </div>
-        <span className={cn('text-xs font-bold ml-2', hasSco ? 'text-wcp-primary' : 'text-wcp-muted')}>
-          {indicator}
-        </span>
-      </button>
+      <div className="relative w-full">
+        <button
+          onClick={onClick}
+          data-testid={`compact-${match.id}`}
+          className="w-full flex items-center justify-between bg-wcp-surface border border-wcp-border rounded-xl px-4 py-2 gap-2 hover:bg-wcp-primary-faint transition-colors"
+        >
+          <div className="flex items-center gap-2 flex-1">
+            <span className="text-lg leading-none">{homeTeam?.flag}</span>
+            <span className="text-xs font-semibold text-wcp-text">{match.homeTeam}</span>
+          </div>
+          <span className="text-sm font-bold text-wcp-text tabular-nums">{scoreLabel}</span>
+          <div className="flex items-center gap-2 flex-1 justify-end">
+            <span className="text-xs font-semibold text-wcp-text">{match.awayTeam}</span>
+            <span className="text-lg leading-none">{awayTeam?.flag}</span>
+          </div>
+          <span className={cn('text-xs font-bold ml-2', hasSco ? 'text-wcp-primary' : 'text-wcp-muted', showClear && 'invisible')}>
+            {indicator}
+          </span>
+        </button>
+        {showClear && (
+          <button
+            data-testid={`clear-score-${match.id}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              onClearScore!(match.id)
+            }}
+            aria-label="Limpar placar"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center text-wcp-muted hover:text-wcp-text hover:bg-wcp-surface-subtle transition-colors text-[10px] font-bold"
+          >
+            ✕
+          </button>
+        )}
+      </div>
     )
   }
 

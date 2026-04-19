@@ -1,6 +1,6 @@
 import { GroupGrid } from '@/components/groups/GroupGrid'
-import { CommunityStatsBar } from '@/components/stats/CommunityStats'
 import { useShareLink } from '@/hooks/useShareLink'
+import { useStore } from '@/store'
 
 function Logo() {
   return (
@@ -40,6 +40,20 @@ function Logo() {
   )
 }
 
+function SimulateButton() {
+  const simulateMissing = useStore((s) => s.simulateMissing)
+  return (
+    <button
+      onClick={simulateMissing}
+      data-testid="simulate-button"
+      title="Preenche apenas os jogos em branco com simulação automática"
+      className="border border-wcp-primary text-wcp-primary text-xs font-semibold rounded-full px-4 py-1.5 transition-opacity hover:opacity-75 active:opacity-50"
+    >
+      🎲 Simular
+    </button>
+  )
+}
+
 function ShareButton() {
   const { share, copied } = useShareLink()
   return (
@@ -58,10 +72,11 @@ export function AppShell() {
     <div className="flex flex-col min-h-screen bg-wcp-bg text-wcp-text">
       <header className="flex items-center justify-between px-4 py-3 bg-wcp-surface border-b border-wcp-border sticky top-0 z-10">
         <Logo />
-        <ShareButton />
+        <div className="flex items-center gap-2">
+          <SimulateButton />
+          <ShareButton />
+        </div>
       </header>
-
-      <CommunityStatsBar />
 
       <main className="flex-1 overflow-y-auto">
         <GroupGrid />

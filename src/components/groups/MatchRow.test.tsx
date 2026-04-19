@@ -9,6 +9,8 @@ const match: Match = {
   homeTeam: 'MEX',
   awayTeam: 'RSA',
   stage: 'group',
+  date: '2026-06-11T23:00:00Z',
+  venue: 'AT&T Stadium, Dallas',
 }
 
 describe('MatchRow', () => {
@@ -125,5 +127,64 @@ describe('MatchRow compact mode', () => {
     expect(screen.getByText('– × –')).toBeInTheDocument()
     expect(screen.getByText('›')).toBeInTheDocument()
     expect(screen.queryByText('✓')).not.toBeInTheDocument()
+  })
+})
+
+describe('MatchRow compact — botão ✕ de limpar score', () => {
+  it('não exibe ✕ quando homeScore é undefined', () => {
+    render(
+      <MatchRow
+        match={match}
+        homeScore={undefined}
+        awayScore={undefined}
+        onScoreChange={vi.fn()}
+        compact
+        onClearScore={vi.fn()}
+      />
+    )
+    expect(screen.queryByTestId('clear-score-A1')).not.toBeInTheDocument()
+  })
+
+  it('exibe ✕ quando score está definido e onClearScore é fornecido', () => {
+    render(
+      <MatchRow
+        match={match}
+        homeScore={2}
+        awayScore={1}
+        onScoreChange={vi.fn()}
+        compact
+        onClearScore={vi.fn()}
+      />
+    )
+    expect(screen.getByTestId('clear-score-A1')).toBeInTheDocument()
+  })
+
+  it('chama onClearScore com o matchId ao clicar no ✕', () => {
+    const onClearScore = vi.fn()
+    render(
+      <MatchRow
+        match={match}
+        homeScore={1}
+        awayScore={0}
+        onScoreChange={vi.fn()}
+        compact
+        onClearScore={onClearScore}
+      />
+    )
+    fireEvent.click(screen.getByTestId('clear-score-A1'))
+    expect(onClearScore).toHaveBeenCalledWith('A1')
+  })
+
+  it('não exibe ✕ quando onClearScore não é fornecido', () => {
+    render(
+      <MatchRow
+        match={match}
+        homeScore={2}
+        awayScore={1}
+        onScoreChange={vi.fn()}
+        compact
+      />
+    )
+    expect(screen.queryByTestId('clear-score-A1')).not.toBeInTheDocument()
   })
 })
