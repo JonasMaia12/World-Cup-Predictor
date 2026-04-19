@@ -84,7 +84,7 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, compact, 
           <span className="text-xs font-semibold text-wcp-text">{match.awayTeam}</span>
           <span className="text-lg leading-none">{awayTeam?.flag}</span>
         </div>
-        <span className={`text-xs font-bold ml-2 ${hasSco ? 'text-wcp-primary' : 'text-wcp-muted'}`}>
+        <span className={cn('text-xs font-bold ml-2', hasSco ? 'text-wcp-primary' : 'text-wcp-muted')}>
           {indicator}
         </span>
       </button>
