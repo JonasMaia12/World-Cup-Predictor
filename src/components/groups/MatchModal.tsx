@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from '@/store'
-import { FIXTURES } from '@/data/wc2026'
+import { FIXTURES, TEAMS } from '@/data/wc2026'
 import { MatchRow } from './MatchRow'
 
 interface MatchModalProps {
@@ -17,33 +17,18 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
     () => FIXTURES.filter((f) => f.group === groupId),
     [groupId]
   )
+
   const filledCount = fixtures.filter((f) => scores[f.id] !== undefined).length
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
-  const initialRevealedCount = firstUnfilledIdx === -1 ? fixtures.length : firstUnfilledIdx + 1
-  const initialExpandedIndex = firstUnfilledIdx === -1 ? -1 : firstUnfilledIdx
-
-  const [revealedCount, setRevealedCount] = useState(initialRevealedCount)
-  const [expandedIndex, setExpandedIndex] = useState(initialExpandedIndex)
-
-  // Sync revealed count if scores change externally (e.g., share link load)
-  useEffect(() => {
-    const newFirstUnfilled = fixtures.findIndex((f) => scores[f.id] === undefined)
-    const newRevealed = newFirstUnfilled === -1 ? fixtures.length : newFirstUnfilled + 1
-    setRevealedCount((prev) => newRevealed > prev ? newRevealed : prev)
-  }, [scores, fixtures])
+  const [expandedIndex, setExpandedIndex] = useState(firstUnfilledIdx)
 
   const handleScoreChange = (matchId: string, home: number, away: number) => {
-    const wasUnset = scores[matchId] === undefined
     setScore(matchId, home, away)
-    if (wasUnset) {
-      const matchIndex = fixtures.findIndex((f) => f.id === matchId)
-      const nextIndex = matchIndex + 1
-      if (nextIndex < fixtures.length && nextIndex >= revealedCount) {
-        setRevealedCount(nextIndex + 1)
-        setExpandedIndex(nextIndex)
-      }
-    }
+  }
+
+  const toggleExpand = (idx: number) => {
+    setExpandedIndex((prev) => (prev === idx ? -1 : idx))
   }
 
   const progressPct = Math.round((filledCount / fixtures.length) * 100)
@@ -62,7 +47,9 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-wcp-border shrink-0">
           <div>
             <h2 className="font-bold text-wcp-text text-base">Grupo {groupId}</h2>
-            <span className="text-xs text-wcp-muted tabular-nums" data-testid="modal-progress">{filledCount}/{fixtures.length}</span>
+            <span className="text-xs text-wcp-muted tabular-nums" data-testid="modal-progress">
+              {filledCount}/{fixtures.length}
+            </span>
           </div>
           <button
             data-testid="modal-close"
@@ -84,35 +71,44 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
 
         {/* Matches */}
         <div className="overflow-y-auto flex-1 px-4 py-4 flex flex-col gap-2">
-          {fixtures.slice(0, revealedCount).map((match, idx) => {
-            const isFilled = scores[match.id] !== undefined
-            const isExpanded = expandedIndex !== -1 && idx === expandedIndex
-            const isCompact = isFilled && !isExpanded
+          {fixtures.map((match, idx) => {
+            const isExpanded = idx === expandedIndex
 
-            if (isCompact) {
+            if (isExpanded) {
+              const homeTeam = TEAMS.find((t) => t.code === match.homeTeam)
+              const awayTeam = TEAMS.find((t) => t.code === match.awayTeam)
               return (
-                <div key={match.id} className="animate-slideDown">
+                <div key={match.id} className="flex flex-col rounded-xl overflow-hidden border border-wcp-primary">
+                  {/* Collapse header */}
+                  <button
+                    data-testid={`collapse-header-${match.id}`}
+                    onClick={() => toggleExpand(idx)}
+                    className="flex items-center justify-between bg-wcp-primary-faint px-4 py-2 text-xs font-semibold text-wcp-text hover:bg-wcp-surface-subtle transition-colors"
+                  >
+                    <span>{homeTeam?.flag} {match.homeTeam}</span>
+                    <span className="text-wcp-primary">▲</span>
+                    <span>{match.awayTeam} {awayTeam?.flag}</span>
+                  </button>
                   <MatchRow
                     match={match}
                     homeScore={scores[match.id]?.home}
                     awayScore={scores[match.id]?.away}
                     onScoreChange={handleScoreChange}
-                    compact
-                    onClick={() => setExpandedIndex(idx)}
                   />
                 </div>
               )
             }
 
             return (
-              <div key={match.id} className="animate-slideDown">
-                <MatchRow
-                  match={match}
-                  homeScore={scores[match.id]?.home}
-                  awayScore={scores[match.id]?.away}
-                  onScoreChange={handleScoreChange}
-                />
-              </div>
+              <MatchRow
+                key={match.id}
+                match={match}
+                homeScore={scores[match.id]?.home}
+                awayScore={scores[match.id]?.away}
+                onScoreChange={handleScoreChange}
+                compact
+                onClick={() => toggleExpand(idx)}
+              />
             )
           })}
         </div>

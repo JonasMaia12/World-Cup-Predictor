@@ -60,61 +60,64 @@ describe('MatchModal', () => {
     expect(screen.getByText('0/6')).toBeInTheDocument()
   })
 
-  it('shows first match expanded (steppers visible)', () => {
+  it('shows all 6 matches on open (accordion — all visible)', () => {
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
+    // First match expanded — steppers visible
     expect(screen.getByTestId('home-plus-A1')).toBeInTheDocument()
+    // Remaining 5 matches collapsed — their compact rows are present
+    expect(screen.getByTestId('compact-A2')).toBeInTheDocument()
+    expect(screen.getByTestId('compact-A3')).toBeInTheDocument()
+    expect(screen.getByTestId('compact-A4')).toBeInTheDocument()
+    expect(screen.getByTestId('compact-A5')).toBeInTheDocument()
+    expect(screen.getByTestId('compact-A6')).toBeInTheDocument()
   })
 
-  it('second match hidden before first is scored', () => {
+  it('clicking a collapsed match expands it and collapses the previous', () => {
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
-    expect(screen.queryByTestId('home-plus-A2')).not.toBeInTheDocument()
+    // A1 starts expanded
+    expect(screen.getByTestId('home-plus-A1')).toBeInTheDocument()
+    // Click A2 compact row → A2 expands, A1 collapses
+    fireEvent.click(screen.getByTestId('compact-A2'))
+    expect(screen.queryByTestId('home-plus-A1')).not.toBeInTheDocument()
+    expect(screen.getByTestId('home-plus-A2')).toBeInTheDocument()
   })
 
-  it('reveals second match after first is scored', async () => {
-    const { useStore } = await import('@/store')
-    const { rerender } = render(<MatchModal groupId="A" onClose={vi.fn()} />)
+  it('clicking the collapse header of the expanded match closes it', () => {
+    render(<MatchModal groupId="A" onClose={vi.fn()} />)
+    // A1 is expanded — collapse header button is visible
+    fireEvent.click(screen.getByTestId('collapse-header-A1'))
+    // A1 steppers gone — all matches now collapsed
+    expect(screen.queryByTestId('home-plus-A1')).not.toBeInTheDocument()
+    expect(screen.getByTestId('compact-A1')).toBeInTheDocument()
+  })
 
+  it('incrementing score does not auto-advance to next match', () => {
+    render(<MatchModal groupId="A" onClose={vi.fn()} />)
+    // A1 expanded — click + on home score
     fireEvent.click(screen.getByTestId('home-plus-A1'))
     expect(mockSetScore).toHaveBeenCalledWith('A1', 1, 0)
-
-    // Simulate store update
-    mockScores = { A1: { home: 1, away: 0 } }
-    vi.mocked(useStore).mockImplementation(((sel: (s: unknown) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore })) as never)
-    rerender(<MatchModal groupId="A" onClose={vi.fn()} />)
-
-    expect(screen.getByTestId('home-plus-A2')).toBeInTheDocument()
-  })
-
-  it('shows first match as compact after second is revealed', async () => {
-    const { useStore } = await import('@/store')
-    mockScores = { A1: { home: 1, away: 0 } }
-    vi.mocked(useStore).mockImplementation(((sel: (s: unknown) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore })) as never)
-    render(<MatchModal groupId="A" onClose={vi.fn()} />)
-
-    // A1 should be compact (no steppers)
-    expect(screen.queryByTestId('home-plus-A1')).not.toBeInTheDocument()
-    // A2 should be expanded (steppers visible)
-    expect(screen.getByTestId('home-plus-A2')).toBeInTheDocument()
-    // A1 shows check mark
-    expect(screen.getByText('✓')).toBeInTheDocument()
-  })
-
-  it('re-expands a compact match when clicked', async () => {
-    const { useStore } = await import('@/store')
-    mockScores = { A1: { home: 1, away: 0 } }
-    vi.mocked(useStore).mockImplementation(((sel: (s: unknown) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore })) as never)
-    render(<MatchModal groupId="A" onClose={vi.fn()} />)
-
-    // A1 is compact — click it to re-expand using data-testid
-    fireEvent.click(screen.getByTestId('compact-A1'))
+    // A1 remains expanded, A2 remains collapsed
     expect(screen.getByTestId('home-plus-A1')).toBeInTheDocument()
+    expect(screen.queryByTestId('home-plus-A2')).not.toBeInTheDocument()
   })
 
-  it('shows progress 6/6 when all matches scored', async () => {
-    const { useStore } = await import('@/store')
+  it('opens last unfilled match when all previous are filled', () => {
+    mockScores = {
+      A1: { home: 1, away: 0 },
+      A2: { home: 0, away: 0 },
+      A3: { home: 2, away: 1 },
+      A4: { home: 0, away: 1 },
+      A5: { home: 3, away: 0 },
+    }
+    vi.mocked(useStore).mockImplementation((sel: (s: StoreState) => unknown) =>
+      sel({ scores: mockScores, setScore: mockSetScore } as unknown as StoreState)
+    )
+    render(<MatchModal groupId="A" onClose={vi.fn()} />)
+    // A6 is the first unfilled → should be expanded
+    expect(screen.getByTestId('home-plus-A6')).toBeInTheDocument()
+  })
+
+  it('all matches collapsed when all already scored on open', () => {
     mockScores = {
       A1: { home: 1, away: 0 },
       A2: { home: 0, away: 0 },
@@ -123,27 +126,31 @@ describe('MatchModal', () => {
       A5: { home: 3, away: 0 },
       A6: { home: 1, away: 1 },
     }
-    vi.mocked(useStore).mockImplementation(((sel: (s: unknown) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore })) as never)
+    vi.mocked(useStore).mockImplementation((sel: (s: StoreState) => unknown) =>
+      sel({ scores: mockScores, setScore: mockSetScore } as unknown as StoreState)
+    )
+    render(<MatchModal groupId="A" onClose={vi.fn()} />)
+    // No steppers visible
+    expect(screen.queryByTestId('home-plus-A1')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('home-plus-A6')).not.toBeInTheDocument()
+    // All compact rows present
+    expect(screen.getByTestId('compact-A1')).toBeInTheDocument()
+    expect(screen.getByTestId('compact-A6')).toBeInTheDocument()
+  })
+
+  it('shows progress 6/6 when all matches scored', () => {
+    mockScores = {
+      A1: { home: 1, away: 0 },
+      A2: { home: 0, away: 0 },
+      A3: { home: 2, away: 1 },
+      A4: { home: 0, away: 1 },
+      A5: { home: 3, away: 0 },
+      A6: { home: 1, away: 1 },
+    }
+    vi.mocked(useStore).mockImplementation((sel: (s: StoreState) => unknown) =>
+      sel({ scores: mockScores, setScore: mockSetScore } as unknown as StoreState)
+    )
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
     expect(screen.getByText('6/6')).toBeInTheDocument()
-  })
-
-  it('shows all matches as compact when all already scored on open', async () => {
-    const { useStore } = await import('@/store')
-    mockScores = {
-      A1: { home: 1, away: 0 },
-      A2: { home: 0, away: 0 },
-      A3: { home: 2, away: 1 },
-      A4: { home: 0, away: 1 },
-      A5: { home: 3, away: 0 },
-      A6: { home: 1, away: 1 },
-    }
-    vi.mocked(useStore).mockImplementation(((sel: (s: unknown) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore })) as never)
-    render(<MatchModal groupId="A" onClose={vi.fn()} />)
-    // No match should show steppers
-    expect(screen.queryByTestId('home-plus-A1')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('home-plus-A2')).not.toBeInTheDocument()
   })
 })
