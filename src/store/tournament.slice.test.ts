@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { create } from 'zustand'
 import { createTournamentSlice, type TournamentSlice } from './tournament.slice'
-import { FIXTURES, TEAMS } from '@/data/wc2026'
 
 function makeStore() {
   return create<TournamentSlice>()((...a) => createTournamentSlice(...a))
