@@ -95,6 +95,7 @@ colors: {
 - ✅ **Fase 7** — UX Improvements: GroupGrid responsivo (1→4 cols), MatchModal gamificado com reveal progressivo, bracket overflow fix + clamp() responsivo — 69 testes, build limpo
 - ✅ **Fase 8** — MatchModal accordion puro: todos os 6 jogos visíveis desde o início, collapse header por jogo, sem auto-advance; MatchRow compact distingue preenchido (✓) de vazio (›) — 71 testes, @claude aprovado
 - 🔧 **Limpeza pós-fase 8** — Turso/libsql removido completamente; 64 testes, build limpo
+- ✅ **Fase 9** — Simulador automático (Poisson + ranking FIFA), reset por partida (✕ compact + "Limpar placar"), info de jogo (data/horário timezone automático/sede) — 79 testes, @claude aprovado
 
 ---
 
