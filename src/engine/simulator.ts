@@ -32,8 +32,10 @@ export function simulateMissingMatches(
   const result: ScoreMap = { ...scores }
   for (const fixture of fixtures) {
     if (result[fixture.id] !== undefined) continue
-    const homeTeam = teams.find((t) => t.code === fixture.homeTeam)!
-    const awayTeam = teams.find((t) => t.code === fixture.awayTeam)!
+    const homeTeam = teams.find((t) => t.code === fixture.homeTeam)
+    const awayTeam = teams.find((t) => t.code === fixture.awayTeam)
+    if (!homeTeam || !awayTeam) throw new Error(`Team not found for fixture ${fixture.id}`)
+
     result[fixture.id] = simulateMatch(homeTeam.rank, awayTeam.rank)
   }
   return result

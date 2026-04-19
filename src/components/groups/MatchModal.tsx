@@ -11,7 +11,6 @@ interface MatchModalProps {
 
 function formatMatchDate(isoDate: string): string {
   return new Date(isoDate).toLocaleString(undefined, {
-    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
