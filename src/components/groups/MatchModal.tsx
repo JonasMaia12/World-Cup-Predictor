@@ -9,9 +9,20 @@ interface MatchModalProps {
   onClose: () => void
 }
 
+function formatMatchDate(isoDate: string): string {
+  return new Date(isoDate).toLocaleString(undefined, {
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export function MatchModal({ groupId, onClose }: MatchModalProps) {
   const scores = useStore((s) => s.scores)
   const setScore = useStore((s) => s.setScore)
+  const clearScore = useStore((s) => s.clearScore)
 
   const fixtures = useMemo(
     () => FIXTURES.filter((f) => f.group === groupId),
@@ -21,25 +32,26 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
   const filledCount = fixtures.filter((f) => scores[f.id] !== undefined).length
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
-  // Safe: modal is always unmounted/remounted on open, so initial state is always fresh.
-  // expandedIndex intentionally does not chase new fills — the user controls accordion navigation.
   const [expandedIndex, setExpandedIndex] = useState(firstUnfilledIdx)
 
   const toggleExpand = (idx: number) => {
     setExpandedIndex((prev) => (prev === idx ? -1 : idx))
   }
 
+  const handleClear = (matchId: string) => {
+    clearScore(matchId)
+    setExpandedIndex(-1)
+  }
+
   const progressPct = Math.round((filledCount / fixtures.length) * 100)
 
   const content = (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
-      {/* Overlay */}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div className="relative z-10 bg-wcp-surface rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md mx-0 sm:mx-4 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-wcp-border shrink-0">
@@ -71,10 +83,11 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
         <div className="overflow-y-auto flex-1 px-4 py-4 flex flex-col gap-2">
           {fixtures.map((match, idx) => {
             const isExpanded = idx === expandedIndex
+            const hasScore = scores[match.id] !== undefined
+            const homeTeam = TEAMS.find((t) => t.code === match.homeTeam)
+            const awayTeam = TEAMS.find((t) => t.code === match.awayTeam)
 
             if (isExpanded) {
-              const homeTeam = TEAMS.find((t) => t.code === match.homeTeam)
-              const awayTeam = TEAMS.find((t) => t.code === match.awayTeam)
               return (
                 <div key={match.id} className="flex flex-col rounded-xl overflow-hidden border border-wcp-primary">
                   {/* Collapse header */}
@@ -87,12 +100,30 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
                     <span className="text-wcp-primary">▲</span>
                     <span>{match.awayTeam} {awayTeam?.flag}</span>
                   </button>
+
+                  {/* Match info */}
+                  <div className="px-4 py-1.5 bg-wcp-surface-subtle border-b border-wcp-border flex items-center gap-3 text-[10px] text-wcp-muted">
+                    <span>📅 {formatMatchDate(match.date)}</span>
+                    <span>|</span>
+                    <span>🏟 {match.venue}</span>
+                  </div>
+
                   <MatchRow
                     match={match}
                     homeScore={scores[match.id]?.home}
                     awayScore={scores[match.id]?.away}
                     onScoreChange={setScore}
                   />
+
+                  {/* Clear score */}
+                  {hasScore && (
+                    <button
+                      onClick={() => handleClear(match.id)}
+                      className="text-[10px] text-wcp-muted hover:text-wcp-text py-2 transition-colors"
+                    >
+                      Limpar placar
+                    </button>
+                  )}
                 </div>
               )
             }
@@ -104,6 +135,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
                 homeScore={scores[match.id]?.home}
                 awayScore={scores[match.id]?.away}
                 onScoreChange={setScore}
+                onClearScore={clearScore}
                 compact
                 onClick={() => toggleExpand(idx)}
               />
