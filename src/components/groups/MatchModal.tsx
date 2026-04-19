@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from '@/store'
-import { FIXTURES, TEAMS } from '@/data/wc2026'
+import { FIXTURES } from '@/data/wc2026'
 import { MatchRow } from './MatchRow'
 
 interface MatchModalProps {
@@ -18,7 +18,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
   const initialRevealedCount = firstUnfilledIdx === -1 ? fixtures.length : firstUnfilledIdx + 1
-  const initialExpandedIndex = firstUnfilledIdx === -1 ? 0 : firstUnfilledIdx
+  const initialExpandedIndex = firstUnfilledIdx === -1 ? -1 : firstUnfilledIdx
 
   const [revealedCount, setRevealedCount] = useState(initialRevealedCount)
   const [expandedIndex, setExpandedIndex] = useState(initialExpandedIndex)
@@ -27,10 +27,8 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
   useEffect(() => {
     const newFirstUnfilled = fixtures.findIndex((f) => scores[f.id] === undefined)
     const newRevealed = newFirstUnfilled === -1 ? fixtures.length : newFirstUnfilled + 1
-    if (newRevealed > revealedCount) {
-      setRevealedCount(newRevealed)
-    }
-  }, [scores]) // eslint-disable-line react-hooks/exhaustive-deps
+    setRevealedCount((prev) => newRevealed > prev ? newRevealed : prev)
+  }, [scores, fixtures])
 
   const handleScoreChange = (matchId: string, home: number, away: number) => {
     const wasUnset = scores[matchId] === undefined
@@ -46,9 +44,6 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
   }
 
   const progressPct = Math.round((filledCount / fixtures.length) * 100)
-
-  // Suppress unused import warning — TEAMS is used in MatchRow but imported here for completeness
-  void TEAMS
 
   const content = (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
@@ -88,7 +83,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
         <div className="overflow-y-auto flex-1 px-4 py-4 flex flex-col gap-2">
           {fixtures.slice(0, revealedCount).map((match, idx) => {
             const isFilled = scores[match.id] !== undefined
-            const isExpanded = idx === expandedIndex
+            const isExpanded = expandedIndex !== -1 && idx === expandedIndex
             const isCompact = isFilled && !isExpanded
 
             if (isCompact) {

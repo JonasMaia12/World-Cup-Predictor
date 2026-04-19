@@ -124,4 +124,22 @@ describe('MatchModal', () => {
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
     expect(screen.getByText('6/6')).toBeInTheDocument()
   })
+
+  it('shows all matches as compact when all already scored on open', async () => {
+    const { useStore } = await import('@/store')
+    mockScores = {
+      A1: { home: 1, away: 0 },
+      A2: { home: 0, away: 0 },
+      A3: { home: 2, away: 1 },
+      A4: { home: 0, away: 1 },
+      A5: { home: 3, away: 0 },
+      A6: { home: 1, away: 1 },
+    }
+    vi.mocked(useStore).mockImplementation(((sel: (s: unknown) => unknown) =>
+      sel({ scores: mockScores, setScore: mockSetScore })) as never)
+    render(<MatchModal groupId="A" onClose={vi.fn()} />)
+    // No match should show steppers
+    expect(screen.queryByTestId('home-plus-A1')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('home-plus-A2')).not.toBeInTheDocument()
+  })
 })
