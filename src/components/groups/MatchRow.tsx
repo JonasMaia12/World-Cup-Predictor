@@ -65,6 +65,10 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, compact, 
   const awayTeam = TEAMS.find((t) => t.code === match.awayTeam)
 
   if (compact) {
+    const hasSco = homeScore !== undefined
+    const scoreLabel = hasSco ? `${home} × ${away}` : '– × –'
+    const indicator = hasSco ? '✓' : '›'
+
     return (
       <button
         onClick={onClick}
@@ -75,12 +79,14 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, compact, 
           <span className="text-lg leading-none">{homeTeam?.flag}</span>
           <span className="text-xs font-semibold text-wcp-text">{match.homeTeam}</span>
         </div>
-        <span className="text-sm font-bold text-wcp-text tabular-nums">{home} × {away}</span>
+        <span className="text-sm font-bold text-wcp-text tabular-nums">{scoreLabel}</span>
         <div className="flex items-center gap-2 flex-1 justify-end">
           <span className="text-xs font-semibold text-wcp-text">{match.awayTeam}</span>
           <span className="text-lg leading-none">{awayTeam?.flag}</span>
         </div>
-        <span className="text-wcp-primary text-xs font-bold ml-2">✓</span>
+        <span className={cn('text-xs font-bold ml-2', hasSco ? 'text-wcp-primary' : 'text-wcp-muted')}>
+          {indicator}
+        </span>
       </button>
     )
   }
