@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useStore } from '@/store'
 import { GROUPS, FIXTURES, TEAMS } from '@/data/wc2026'
 import { classifyGroup } from '@/engine/classifier'
@@ -13,7 +14,7 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
   const group = GROUPS.find((g) => g.id === groupId)
   if (!group) return null
 
-  const standings = classifyGroup(group, scores)
+  const standings = useMemo(() => classifyGroup(group, scores), [group, scores])
   const fixtures = FIXTURES.filter((f) => f.group === groupId)
   const filledCount = fixtures.filter((f) => scores[f.id] !== undefined).length
   const isComplete = filledCount === fixtures.length
@@ -22,6 +23,7 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
     <button
       onClick={onClick}
       data-testid={`group-card-${groupId}`}
+      aria-label={`Abrir grupo ${groupId}`}
       className={cn(
         'w-full text-left rounded-xl border transition-colors bg-wcp-surface hover:bg-wcp-primary-faint',
         isComplete ? 'border-wcp-primary' : 'border-wcp-border',
