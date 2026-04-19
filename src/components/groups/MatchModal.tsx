@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from '@/store'
 import { FIXTURES } from '@/data/wc2026'
@@ -13,7 +13,10 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
   const scores = useStore((s) => s.scores)
   const setScore = useStore((s) => s.setScore)
 
-  const fixtures = FIXTURES.filter((f) => f.group === groupId)
+  const fixtures = useMemo(
+    () => FIXTURES.filter((f) => f.group === groupId),
+    [groupId]
+  )
   const filledCount = fixtures.filter((f) => scores[f.id] !== undefined).length
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
