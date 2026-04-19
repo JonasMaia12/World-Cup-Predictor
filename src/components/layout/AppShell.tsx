@@ -1,5 +1,4 @@
 import { GroupGrid } from '@/components/groups/GroupGrid'
-import { CommunityStatsBar } from '@/components/stats/CommunityStats'
 import { useShareLink } from '@/hooks/useShareLink'
 
 function Logo() {
@@ -60,8 +59,6 @@ export function AppShell() {
         <Logo />
         <ShareButton />
       </header>
-
-      <CommunityStatsBar />
 
       <main className="flex-1 overflow-y-auto">
         <GroupGrid />

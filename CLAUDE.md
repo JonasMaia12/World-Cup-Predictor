@@ -15,14 +15,13 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 | Testes unitários | Vitest |
 | Testes E2E | Playwright |
 | Deploy | GitHub Pages + GitHub Actions |
-| ORM | Drizzle ORM + @libsql/client (Turso) |
 
 ---
 
 ## Decisões de Design
 
 - Sem auth no MVP — brackets salvos via LocalStorage
-- Layout: coluna única full-width — Header → CommunityStatsBar → GroupGrid (cards responsivos) → Bracket
+- Layout: coluna única full-width — Header → GroupGrid (cards responsivos) → Bracket
 - Bracket: "espinha de peixe" convergindo para o centro (Final); mobile = minimap + cards por rodada
 - Tema: **Cyber Green Light** — fundo `#f0f4f1`, verde neon `#00a854`, texto `#1a2a1a`
 - Estado: Zustand + TanStack Query — sem Context API ou Redux
@@ -42,12 +41,11 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 src/
 ├── engine/        ← Lógica FIFA pura (zero React, TDD)
 ├── store/         ← Zustand slices (tournament + ui) + persist
-├── hooks/         ← useShareLink, useH2H (TanStack Query), useCommunityStats
+├── hooks/         ← useShareLink, useH2H (TanStack Query)
 ├── components/
 │   ├── layout/    ← AppShell (header + logo + share button + layout)
 │   ├── groups/    ← GroupCard, GroupGrid, MatchModal, MatchRow (stepper)
 │   ├── bracket/   ← BracketView (espinha de peixe), BracketMinimap
-│   ├── stats/     ← CommunityStats.tsx (export: CommunityStatsBar — pills horizontais)
 │   └── share/     ← ShareButton
 ├── data/          ← wc2026.ts (48 times, 12 grupos, fixtures FIFA 2026)
 └── lib/           ← query-client.ts
@@ -92,10 +90,11 @@ colors: {
 - ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
 - ✅ **Fase 3** — E2E & Estabilidade (Playwright 6 testes, CI verde, deploy GitHub Pages)
 - ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes, @claude aprovado
-- ✅ **Fase 5** — Community Stats: useCommunityStats + @libsql/client HTTP, tabela `team_stats` no Turso (aws-eu-west-1) — 42 testes, @claude aprovado
+- ✅ **Fase 5** — Community Stats (removida): feature estava incompleta (sem write path); Turso + @libsql/client removidos da stack em 2026-04-19
 - ✅ **Fase 6** — Redesign Cyber Green Light: nova paleta, sem sidebar, accordion de grupos, stepper +/−, bracket espinha de peixe — 49 testes, @claude aprovado
 - ✅ **Fase 7** — UX Improvements: GroupGrid responsivo (1→4 cols), MatchModal gamificado com reveal progressivo, bracket overflow fix + clamp() responsivo — 69 testes, build limpo
 - ✅ **Fase 8** — MatchModal accordion puro: todos os 6 jogos visíveis desde o início, collapse header por jogo, sem auto-advance; MatchRow compact distingue preenchido (✓) de vazio (›) — 71 testes, @claude aprovado
+- 🔧 **Limpeza pós-fase 8** — Turso/libsql removido completamente; 64 testes, build limpo
 
 ---
 
