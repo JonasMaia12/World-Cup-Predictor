@@ -111,4 +111,19 @@ describe('MatchRow compact mode', () => {
     fireEvent.click(screen.getByRole('button'))
     expect(onClick).toHaveBeenCalledTimes(1)
   })
+
+  it('compact without score shows em-dashes and chevron', () => {
+    render(
+      <MatchRow
+        match={match}
+        homeScore={undefined}
+        awayScore={undefined}
+        onScoreChange={vi.fn()}
+        compact
+      />
+    )
+    expect(screen.getByText('– × –')).toBeInTheDocument()
+    expect(screen.getByText('›')).toBeInTheDocument()
+    expect(screen.queryByText('✓')).not.toBeInTheDocument()
+  })
 })
