@@ -91,6 +91,17 @@ describe('MatchModal', () => {
     expect(screen.getByTestId('compact-A1')).toBeInTheDocument()
   })
 
+  it('collapse header closes a non-first expanded match', () => {
+    render(<MatchModal groupId="A" onClose={vi.fn()} />)
+    // Open A3
+    fireEvent.click(screen.getByTestId('compact-A3'))
+    expect(screen.getByTestId('home-plus-A3')).toBeInTheDocument()
+    // Collapse A3 via its header
+    fireEvent.click(screen.getByTestId('collapse-header-A3'))
+    expect(screen.queryByTestId('home-plus-A3')).not.toBeInTheDocument()
+    expect(screen.getByTestId('compact-A3')).toBeInTheDocument()
+  })
+
   it('incrementing score does not auto-advance to next match', () => {
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
     // A1 expanded — click + on home score

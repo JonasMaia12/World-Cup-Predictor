@@ -22,6 +22,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
   // Safe: modal is always unmounted/remounted on open, so initial state is always fresh.
+  // expandedIndex intentionally does not chase new fills — the user controls accordion navigation.
   const [expandedIndex, setExpandedIndex] = useState(firstUnfilledIdx)
 
   const toggleExpand = (idx: number) => {
