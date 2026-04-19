@@ -81,7 +81,7 @@ colors: {
 - TDD obrigatório no engine (`superpowers:test-driven-development`)
 - MatchRow props-only — sem acesso direto ao store
 - Standings e bracket sempre derivados no render — nunca armazenados
-- `useMemo` em GroupAccordion para evitar recalcular 12 grupos + bracket por render
+- `useMemo` em GroupGrid para evitar recalcular 12 grupos + bracket por render
 - SOLID / DRY / KISS / YAGNI
 
 ---
