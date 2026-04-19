@@ -65,3 +65,50 @@ describe('MatchRow', () => {
     expect(onScoreChange).toHaveBeenCalledWith('A1', 0, 1)
   })
 })
+
+describe('MatchRow compact mode', () => {
+  it('renders team codes and scores without steppers', () => {
+    render(
+      <MatchRow
+        match={match}
+        homeScore={2}
+        awayScore={1}
+        onScoreChange={vi.fn()}
+        compact
+      />
+    )
+    expect(screen.getByText('MEX')).toBeInTheDocument()
+    expect(screen.getByText('RSA')).toBeInTheDocument()
+    expect(screen.queryByTestId('home-plus-A1')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('away-plus-A1')).not.toBeInTheDocument()
+  })
+
+  it('renders check mark in compact mode', () => {
+    render(
+      <MatchRow
+        match={match}
+        homeScore={2}
+        awayScore={1}
+        onScoreChange={vi.fn()}
+        compact
+      />
+    )
+    expect(screen.getByText('✓')).toBeInTheDocument()
+  })
+
+  it('calls onClick when compact row is clicked', () => {
+    const onClick = vi.fn()
+    render(
+      <MatchRow
+        match={match}
+        homeScore={1}
+        awayScore={0}
+        onScoreChange={vi.fn()}
+        compact
+        onClick={onClick}
+      />
+    )
+    fireEvent.click(screen.getByRole('button'))
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+})

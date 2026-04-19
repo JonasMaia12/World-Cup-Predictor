@@ -7,6 +7,8 @@ interface MatchRowProps {
   homeScore: number | undefined
   awayScore: number | undefined
   onScoreChange: (matchId: string, home: number, away: number) => void
+  compact?: boolean
+  onClick?: () => void
 }
 
 function Stepper({
@@ -56,11 +58,32 @@ function Stepper({
   )
 }
 
-export function MatchRow({ match, homeScore, awayScore, onScoreChange }: MatchRowProps) {
+export function MatchRow({ match, homeScore, awayScore, onScoreChange, compact, onClick }: MatchRowProps) {
   const home = homeScore ?? 0
   const away = awayScore ?? 0
   const homeTeam = TEAMS.find((t) => t.code === match.homeTeam)
   const awayTeam = TEAMS.find((t) => t.code === match.awayTeam)
+
+  if (compact) {
+    return (
+      <button
+        onClick={onClick}
+        data-testid={`compact-${match.id}`}
+        className="w-full flex items-center justify-between bg-wcp-surface border border-wcp-border rounded-xl px-4 py-2 gap-2 hover:bg-wcp-primary-faint transition-colors"
+      >
+        <div className="flex items-center gap-2 flex-1">
+          <span className="text-lg leading-none">{homeTeam?.flag}</span>
+          <span className="text-xs font-semibold text-wcp-text">{match.homeTeam}</span>
+        </div>
+        <span className="text-sm font-bold text-wcp-text tabular-nums">{home} × {away}</span>
+        <div className="flex items-center gap-2 flex-1 justify-end">
+          <span className="text-xs font-semibold text-wcp-text">{match.awayTeam}</span>
+          <span className="text-lg leading-none">{awayTeam?.flag}</span>
+        </div>
+        <span className="text-wcp-primary text-xs font-bold ml-2">✓</span>
+      </button>
+    )
+  }
 
   return (
     <div className="flex items-center justify-between bg-wcp-surface border border-wcp-border rounded-xl px-4 py-3 gap-2">
