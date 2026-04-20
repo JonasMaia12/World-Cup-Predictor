@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import * as storeModule from '@/store'
+import type { StoreState } from '@/store'
 import { GroupPositionPicker } from './GroupPositionPicker'
 
 vi.mock('@/store', () => ({ useStore: vi.fn() }))
@@ -15,7 +16,7 @@ const baseStore = {
 function mockStore(overrides = {}) {
   const store = { ...baseStore, ...overrides }
   vi.mocked(storeModule.useStore).mockImplementation(
-    (selector: (s: typeof store) => unknown) => selector(store),
+    (sel: (s: StoreState) => unknown) => sel(store as unknown as StoreState),
   )
 }
 

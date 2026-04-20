@@ -212,6 +212,7 @@ export function KnockoutMatchModal({ match, roundLabel, onClose }: KnockoutMatch
               {/* Clear score */}
               {existing && (
                 <button
+                  data-testid={`clear-score-${match.id}`}
                   onClick={() => {
                     clearScore(match.id)
                     onClose()

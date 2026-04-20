@@ -40,6 +40,27 @@ function Logo() {
   )
 }
 
+function ResetAllButton() {
+  const resetAll = useStore((s) => s.resetAll)
+
+  const handleClick = () => {
+    if (window.confirm('Tens a certeza? Todos os resultados serão apagados.')) {
+      resetAll()
+    }
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      data-testid="reset-all-btn"
+      title="Limpar todos os resultados"
+      className="border border-red-300 text-red-400 text-xs font-semibold rounded-full px-4 py-1.5 transition-opacity hover:opacity-75 active:opacity-50"
+    >
+      Limpar tudo
+    </button>
+  )
+}
+
 function SimulateButton() {
   const simulateMissing = useStore((s) => s.simulateMissing)
   return (
@@ -73,6 +94,7 @@ export function AppShell() {
       <header className="flex items-center justify-between px-4 py-3 bg-wcp-surface border-b border-wcp-border sticky top-0 z-10">
         <Logo />
         <div className="flex items-center gap-2">
+          <ResetAllButton />
           <SimulateButton />
           <ShareButton />
         </div>
