@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useStore } from '@/store'
 import { FIXTURES, TEAMS } from '@/data/wc2026'
 import { MatchRow } from './MatchRow'
+import { GroupPositionPicker } from './GroupPositionPicker'
 
 interface MatchModalProps {
   groupId: string
@@ -32,6 +33,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
   const [expandedIndex, setExpandedIndex] = useState(firstUnfilledIdx)
+  const [showPositionPicker, setShowPositionPicker] = useState(false)
 
   const toggleExpand = (idx: number) => {
     setExpandedIndex((prev) => (prev === idx ? -1 : idx))
@@ -59,6 +61,13 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
             <span className="text-xs text-wcp-muted tabular-nums" data-testid="modal-progress">
               {filledCount}/{fixtures.length}
             </span>
+            <button
+              data-testid="open-position-picker"
+              onClick={() => setShowPositionPicker((v) => !v)}
+              className="text-[10px] text-wcp-primary font-semibold underline underline-offset-2 mt-0.5"
+            >
+              🏆 Definir classificação
+            </button>
           </div>
           <button
             data-testid="modal-close"
@@ -77,6 +86,13 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
             style={{ width: `${progressPct}%` }}
           />
         </div>
+
+        {showPositionPicker && (
+          <GroupPositionPicker
+            groupId={groupId}
+            onClose={() => setShowPositionPicker(false)}
+          />
+        )}
 
         {/* Matches */}
         <div className="overflow-y-auto flex-1 px-4 py-4 flex flex-col gap-2">

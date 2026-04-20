@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { poissonRandom, simulateMatch, simulateMissingMatches } from './simulator'
+import { poissonRandom, simulateMatch, simulateMissingMatches, simulateKnockoutMatch } from './simulator'
 import type { ScoreMap } from './types'
 import { FIXTURES, TEAMS } from '@/data/wc2026'
 
@@ -75,5 +75,43 @@ describe('simulateMissingMatches', () => {
     FIXTURES.forEach((f) => {
       expect(result[f.id]).toEqual({ home: 1, away: 0 })
     })
+  })
+})
+
+describe('simulateKnockoutMatch', () => {
+  it('never returns a draw (100 tries)', () => {
+    for (let i = 0; i < 100; i++) {
+      const r = simulateKnockoutMatch('ARG', 'BRA', TEAMS)
+      expect(r.home).not.toBe(r.away)
+    }
+  })
+
+  it('with forcedWinner as home team, home wins every time (50 tries)', () => {
+    for (let i = 0; i < 50; i++) {
+      const r = simulateKnockoutMatch('ARG', 'BRA', TEAMS, 'ARG')
+      expect(r.home).toBeGreaterThan(r.away)
+    }
+  })
+
+  it('with forcedWinner as away team, away wins every time (50 tries)', () => {
+    for (let i = 0; i < 50; i++) {
+      const r = simulateKnockoutMatch('ARG', 'BRA', TEAMS, 'BRA')
+      expect(r.away).toBeGreaterThan(r.home)
+    }
+  })
+
+  it('returns non-negative integers', () => {
+    const r = simulateKnockoutMatch('ARG', 'BRA', TEAMS)
+    expect(Number.isInteger(r.home)).toBe(true)
+    expect(Number.isInteger(r.away)).toBe(true)
+    expect(r.home).toBeGreaterThanOrEqual(0)
+    expect(r.away).toBeGreaterThanOrEqual(0)
+  })
+
+  it('falls back gracefully when team codes are unknown', () => {
+    const r = simulateKnockoutMatch('XXX', 'YYY', TEAMS)
+    expect(r).toEqual({ home: 1, away: 0 })
+    const r2 = simulateKnockoutMatch('XXX', 'YYY', TEAMS, 'YYY')
+    expect(r2).toEqual({ home: 0, away: 1 })
   })
 })

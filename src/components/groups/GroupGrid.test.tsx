@@ -4,7 +4,7 @@ import { GroupGrid } from './GroupGrid'
 
 vi.mock('@/store', () => ({
   useStore: vi.fn((sel: (s: unknown) => unknown) =>
-    sel({ scores: {} })
+    sel({ scores: {}, thirdQualifiers: [] })
   ),
 }))
 
@@ -21,6 +21,7 @@ vi.mock('@/engine/bracket-generator', () => ({
     thirdPlace: { id: '3rd', home: null, away: null },
     final: { id: 'final', home: null, away: null },
   }),
+  advanceWinner: () => null,
 }))
 
 vi.mock('@/data/wc2026', () => ({

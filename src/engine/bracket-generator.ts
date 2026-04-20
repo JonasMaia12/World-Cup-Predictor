@@ -1,4 +1,4 @@
-import type { GroupStandings, Bracket, BracketMatch, Standing } from './types'
+import type { GroupStandings, Bracket, BracketMatch, Standing, ScoreMap } from './types'
 
 // FIFA 2026 Round of 32 slot template — 16 matches, 32 unique slots.
 // Slot keys: '1A'=winner of A, '2B'=runner-up of B, '3-N'=Nth best 3rd place.
@@ -18,13 +18,23 @@ const ROUND_OF_32_TEMPLATE: Array<[string, string]> = [
   ['2K', '3-7'], ['2L', '3-8'],
 ]
 
+export function advanceWinner(matchId: string, scores: ScoreMap): 'home' | 'away' | null {
+  const score = scores[matchId]
+  if (!score) return null
+  if (score.home === score.away) return null
+  return score.home > score.away ? 'home' : 'away'
+}
+
+function pickSide(match: BracketMatch, side: 'home' | 'away' | null): string | null {
+  if (!side) return null
+  return side === 'home' ? match.home : match.away
+}
+
 function selectBest3rds(standings: GroupStandings): Standing[] {
   const thirds: Standing[] = Object.values(standings)
     .filter((group) => group.length >= 3)
     .map((group) => group[2])
 
-  // NOTE: FIFA best-3rd ranking criteria continue beyond goals-for (goals-against, then lots),
-  // but those levels are omitted here — ties at this depth are extremely rare in practice.
   return [...thirds]
     .sort((a, b) =>
       b.points - a.points ||
@@ -34,6 +44,22 @@ function selectBest3rds(standings: GroupStandings): Standing[] {
     .slice(0, 8)
 }
 
+function selectBest3rdsFromGroups(standings: GroupStandings, groupIds: string[]): string[] {
+  const thirds = groupIds
+    .map((id) => standings[id]?.[2])
+    .filter((s): s is Standing => s !== undefined)
+
+  return [...thirds]
+    .sort((a, b) =>
+      b.points - a.points ||
+      b.goalDiff - a.goalDiff ||
+      b.goalsFor - a.goalsFor
+    )
+    .slice(0, 8)
+    .map((s) => s.teamCode)
+}
+
+// key format: '1X'=winner of group X, '2X'=runner-up, '3-N'=Nth best 3rd (1-indexed)
 function resolveSlot(
   key: string,
   winners: Record<string, string>,
@@ -46,7 +72,11 @@ function resolveSlot(
   return null
 }
 
-export function generateBracket(standings: GroupStandings): Bracket {
+export function generateBracket(
+  standings: GroupStandings,
+  scores: ScoreMap = {},
+  thirdQualifiers?: string[],
+): Bracket {
   const winners: Record<string, string> = {}
   const runnersUp: Record<string, string> = {}
 
@@ -55,7 +85,10 @@ export function generateBracket(standings: GroupStandings): Bracket {
     if (groupStandings[1]) runnersUp[groupId] = groupStandings[1].teamCode
   }
 
-  const best3rds = selectBest3rds(standings).map((s) => s.teamCode)
+  const best3rds =
+    thirdQualifiers && thirdQualifiers.length > 0
+      ? selectBest3rdsFromGroups(standings, thirdQualifiers)
+      : selectBest3rds(standings).map((s) => s.teamCode)
 
   const roundOf32: BracketMatch[] = ROUND_OF_32_TEMPLATE.map(([homeKey, awayKey], i) => ({
     id: `r32-${i + 1}`,
@@ -63,14 +96,40 @@ export function generateBracket(standings: GroupStandings): Bracket {
     away: resolveSlot(awayKey, winners, runnersUp, best3rds),
   }))
 
-  const emptyMatch = (id: string): BracketMatch => ({ id, home: null, away: null })
+  const roundOf16: BracketMatch[] = Array.from({ length: 8 }, (_, i) => ({
+    id: `r16-${i + 1}`,
+    home: pickSide(roundOf32[i * 2], advanceWinner(roundOf32[i * 2].id, scores)),
+    away: pickSide(roundOf32[i * 2 + 1], advanceWinner(roundOf32[i * 2 + 1].id, scores)),
+  }))
 
-  return {
-    roundOf32,
-    roundOf16: Array.from({ length: 16 }, (_, i) => emptyMatch(`r16-${i + 1}`)),
-    quarterFinals: Array.from({ length: 8 }, (_, i) => emptyMatch(`qf-${i + 1}`)),
-    semiFinals: Array.from({ length: 4 }, (_, i) => emptyMatch(`sf-${i + 1}`)),
-    thirdPlace: emptyMatch('3rd'),
-    final: emptyMatch('final'),
+  const quarterFinals: BracketMatch[] = Array.from({ length: 4 }, (_, i) => ({
+    id: `qf-${i + 1}`,
+    home: pickSide(roundOf16[i * 2], advanceWinner(roundOf16[i * 2].id, scores)),
+    away: pickSide(roundOf16[i * 2 + 1], advanceWinner(roundOf16[i * 2 + 1].id, scores)),
+  }))
+
+  const semiFinals: BracketMatch[] = Array.from({ length: 2 }, (_, i) => ({
+    id: `sf-${i + 1}`,
+    home: pickSide(quarterFinals[i * 2], advanceWinner(quarterFinals[i * 2].id, scores)),
+    away: pickSide(quarterFinals[i * 2 + 1], advanceWinner(quarterFinals[i * 2 + 1].id, scores)),
+  }))
+
+  const sf0 = semiFinals[0]
+  const sf1 = semiFinals[1]
+  const sf0Winner = advanceWinner(sf0.id, scores)
+  const sf1Winner = advanceWinner(sf1.id, scores)
+
+  const final: BracketMatch = {
+    id: 'final',
+    home: pickSide(sf0, sf0Winner),
+    away: pickSide(sf1, sf1Winner),
   }
+
+  const thirdPlace: BracketMatch = {
+    id: '3rd',
+    home: sf0Winner ? (sf0Winner === 'home' ? sf0.away : sf0.home) : null,
+    away: sf1Winner ? (sf1Winner === 'home' ? sf1.away : sf1.home) : null,
+  }
+
+  return { roundOf32, roundOf16, quarterFinals, semiFinals, thirdPlace, final }
 }

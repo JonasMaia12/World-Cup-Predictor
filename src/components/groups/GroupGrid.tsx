@@ -2,17 +2,36 @@ import { useState, useMemo } from 'react'
 import { useStore } from '@/store'
 import { GROUPS } from '@/data/wc2026'
 import { classifyGroup } from '@/engine/classifier'
-import { generateBracket } from '@/engine/bracket-generator'
+import { generateBracket, advanceWinner } from '@/engine/bracket-generator'
 import { GroupCard } from './GroupCard'
 import { MatchModal } from './MatchModal'
 import { BracketView } from '@/components/bracket/BracketView'
-import type { GroupStandings } from '@/engine/types'
+import type { GroupStandings, BracketMatch } from '@/engine/types'
+import { KnockoutMatchModal } from '@/components/bracket/KnockoutMatchModal'
 
 const GROUP_IDS = GROUPS.map((g) => g.id)
 
+const ROUND_LABELS: Record<string, string> = {
+  r32: 'Oitavas de Final',
+  r16: 'Rodada de 16',
+  qf:  'Quartas de Final',
+  sf:  'Semifinal',
+  final: 'Final',
+  '3rd': '3.º/4.º Lugar',
+}
+
+function getRoundLabel(matchId: string): string {
+  if (matchId === 'final') return ROUND_LABELS['final']
+  if (matchId === '3rd') return ROUND_LABELS['3rd']
+  const prefix = matchId.replace(/-\d+$/, '')
+  return ROUND_LABELS[prefix] ?? ''
+}
+
 export function GroupGrid() {
   const scores = useStore((s) => s.scores)
+  const thirdQualifiers = useStore((s) => s.thirdQualifiers)
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null)
+  const [activeKnockoutMatch, setActiveKnockoutMatch] = useState<BracketMatch | null>(null)
 
   const allStandings = useMemo(() => {
     const result: GroupStandings = {}
@@ -22,7 +41,16 @@ export function GroupGrid() {
     return result
   }, [scores])
 
-  const bracket = useMemo(() => generateBracket(allStandings), [allStandings])
+  const bracket = useMemo(
+    () => generateBracket(allStandings, scores, thirdQualifiers),
+    [allStandings, scores, thirdQualifiers],
+  )
+
+  const champion = useMemo(() => {
+    const side = advanceWinner('final', scores)
+    if (!side) return null
+    return side === 'home' ? bracket.final.home : bracket.final.away
+  }, [bracket, scores])
 
   return (
     <div className="w-full px-4 py-4 max-w-screen-xl mx-auto">
@@ -45,15 +73,28 @@ export function GroupGrid() {
           </span>
         </div>
         <div className="bg-wcp-surface rounded-b-xl">
-          <BracketView bracket={bracket} />
+          <BracketView
+            bracket={bracket}
+            champion={champion}
+            onMatchClick={setActiveKnockoutMatch}
+          />
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Group modal */}
       {activeGroupId && (
         <MatchModal
           groupId={activeGroupId}
           onClose={() => setActiveGroupId(null)}
+        />
+      )}
+
+      {/* Knockout match modal */}
+      {activeKnockoutMatch && (
+        <KnockoutMatchModal
+          match={activeKnockoutMatch}
+          roundLabel={getRoundLabel(activeKnockoutMatch.id)}
+          onClose={() => setActiveKnockoutMatch(null)}
         />
       )}
     </div>

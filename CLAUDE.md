@@ -96,6 +96,45 @@ colors: {
 - ✅ **Fase 8** — MatchModal accordion puro: todos os 6 jogos visíveis desde o início, collapse header por jogo, sem auto-advance; MatchRow compact distingue preenchido (✓) de vazio (›) — 71 testes, @claude aprovado
 - 🔧 **Limpeza pós-fase 8** — Turso/libsql removido completamente; 64 testes, build limpo
 - ✅ **Fase 9** — Simulador automático (Poisson + ranking FIFA), reset por partida (✕ compact + "Limpar placar"), info de jogo (data/horário timezone automático/sede) — 79 testes, @claude aprovado
+- 📐 **Fase 10** — Bracket interactivo (design aprovado, implementação pendente) — spec: `docs/superpowers/specs/2026-04-19-fase10-interactive-bracket-design.md`
+
+---
+
+## Fase 10 — Bracket Interactivo (próxima implementação)
+
+### Arquitectura central
+- **ScoreMap unificado**: grupo (`A1`…`L6`) + eliminatória (`r32-1`…`final`, `3rd`) no mesmo `ScoreMap`. Sem novos tipos.
+- **Bracket sempre derivado**: `generateBracket(standings, scores?)` — propaga vencedores em cascata r32→r16→qf→sf→final. Nunca armazenado no store.
+- **Share link**: sem alterações — ScoreMap unificado já serializa tudo.
+
+### Novas acções no store
+| Acção | Descrição |
+|---|---|
+| `resetAll()` | Limpa ScoreMap + thirdQualifiers |
+| `simulateKnockoutWinner(matchId, winnerCode)` | Simula placar Poisson com vencedor forçado |
+| `pickGroupOrder(groupId, orderedTeams)` | Simula placares de grupo na ordem pedida |
+| `addThirdQualifier(groupId)` | Adiciona grupo ao pool de 8 terceiros |
+| `removeThirdQualifier(groupId)` | Remove grupo do pool de 8 terceiros |
+
+Novo campo no store: `thirdQualifiers: string[]` (group IDs, máx 8).
+
+### Novas funções engine
+- `advanceWinner(matchId, scores)` — devolve vencedor ou null (empate/sem score)
+- `generateGroupScoresForOrder(orderedTeams, fixtures, teams)` — Poisson com winner forçado por hierarquia
+- `simulateKnockoutMatch(home, away, teams, forcedWinner?)` — Poisson, nunca empate, fallback 1-0
+
+### Novos componentes UI
+- `bracket/KnockoutMatchModal` — modal ao clicar card do bracket; toggle placar exato / só vencedor; bloqueia empate
+- `groups/GroupPositionPicker` — sub-painel no MatchModal; reordenar ↑↓; toggle 3.º qualifica (bloqueado se pool cheio)
+- Banner campeão em `BracketView` — visível quando `advanceWinner('final', scores) !== null`
+- Botão "Limpar tudo" em AppShell — outline vermelho, confirma antes de `resetAll()`
+
+### Regras knockout
+- Empate = inválido. Botão de confirmação bloqueado + feedback visual (borda vermelha).
+- Slot null = modal mostra "Aguarda resultado anterior".
+
+### Meta de testes
+79 actuais → ~110–120 após Fase 10.
 
 ---
 
