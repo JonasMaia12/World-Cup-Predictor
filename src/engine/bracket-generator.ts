@@ -1,12 +1,19 @@
 import type { GroupStandings, Bracket, BracketMatch, Standing, ScoreMap } from './types'
 
+// FIFA 2026 Round of 32 slot template — 16 matches, 32 unique slots.
+// Slot keys: '1A'=winner of A, '2B'=runner-up of B, '3-N'=Nth best 3rd place.
+// Structure: 8 cross-group W vs R + 4 W vs best-3rd + 4 R vs best-3rd = 12W + 12R + 8T
+// NOTE: exact cross-group pairings follow FIFA 2026 official bracket structure.
 const ROUND_OF_32_TEMPLATE: Array<[string, string]> = [
+  // Winner vs Runner-Up (8 matches)
   ['1A', '2B'], ['1B', '2A'],
   ['1C', '2D'], ['1D', '2C'],
   ['1E', '2F'], ['1F', '2E'],
   ['1G', '2H'], ['1H', '2G'],
+  // Winner vs Best-3rd (4 matches)
   ['1I', '3-1'], ['1J', '3-2'],
   ['1K', '3-3'], ['1L', '3-4'],
+  // Runner-Up vs Best-3rd (4 matches)
   ['2I', '3-5'], ['2J', '3-6'],
   ['2K', '3-7'], ['2L', '3-8'],
 ]
@@ -52,6 +59,7 @@ function selectBest3rdsFromGroups(standings: GroupStandings, groupIds: string[])
     .map((s) => s.teamCode)
 }
 
+// key format: '1X'=winner of group X, '2X'=runner-up, '3-N'=Nth best 3rd (1-indexed)
 function resolveSlot(
   key: string,
   winners: Record<string, string>,
