@@ -3,6 +3,7 @@ import type { ScoreMap } from './types'
 
 const LAMBDA_BASE = 1.35
 const HOME_ADVANTAGE = 1.1
+const MAX_ATTEMPTS = 20
 
 export function poissonRandom(lambda: number): number {
   const L = Math.exp(-lambda)
@@ -54,7 +55,6 @@ export function simulateKnockoutMatch(
     return forcedWinner === awayCode ? { home: 0, away: 1 } : { home: 1, away: 0 }
   }
 
-  const MAX_ATTEMPTS = 20
   for (let i = 0; i < MAX_ATTEMPTS; i++) {
     const result = simulateMatch(homeTeam.rank, awayTeam.rank)
     if (result.home === result.away) continue

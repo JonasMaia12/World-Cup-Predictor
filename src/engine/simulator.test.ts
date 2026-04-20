@@ -107,4 +107,11 @@ describe('simulateKnockoutMatch', () => {
     expect(r.home).toBeGreaterThanOrEqual(0)
     expect(r.away).toBeGreaterThanOrEqual(0)
   })
+
+  it('falls back gracefully when team codes are unknown', () => {
+    const r = simulateKnockoutMatch('XXX', 'YYY', TEAMS)
+    expect(r).toEqual({ home: 1, away: 0 })
+    const r2 = simulateKnockoutMatch('XXX', 'YYY', TEAMS, 'YYY')
+    expect(r2).toEqual({ home: 0, away: 1 })
+  })
 })
