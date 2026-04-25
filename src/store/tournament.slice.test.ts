@@ -136,20 +136,22 @@ describe('TournamentSlice — cascade knockout em pickGroupOrder', () => {
     expect(store.getState().scores['r32-2']).toBeUndefined()
   })
 
-  it('NÃO limpa r32-1 se pickGroupOrder não altera o 1º e 2º do Grupo B', () => {
+  it('NÃO limpa r32-1 se pickGroupOrder aplica a mesma ordem do Grupo A', () => {
     const store = makeStore()
-    // Injectar r32-1 score
-    store.getState().setScores({ 'r32-1': { home: 2, away: 1 } })
+    // Grupo A completo com MEX em 1º (igual ao teste anterior)
+    store.getState().setScore('A1', 2, 0)
+    store.getState().setScore('A2', 1, 0)
+    store.getState().setScore('A3', 2, 0)
+    store.getState().setScore('A4', 2, 0)
+    store.getState().setScore('A5', 2, 0)
+    store.getState().setScore('A6', 1, 0)
+    store.getState().setScores({ ...store.getState().scores, 'r32-1': { home: 2, away: 1 } })
 
-    // pickGroupOrder no Grupo B (não afecta r32-1 directamente — r32-1 é alimentado pelo Grupo A/B)
-    // Mas para testar que um grupo diferente não afecta outro grupo's downstream:
-    // Se pickGroupOrder de B não muda standings de B, r32-1 (que é 1A vs 2B) não deve ser limpo
-    // Aqui testamos que o store não crasha e r32-1 permanece
-    const groupB = GROUPS.find((g) => g.id === 'B')!
-    store.getState().pickGroupOrder('B', groupB.teams)
-    // r32-1 pode ter sido limpo ou não dependendo de se 2B mudou
-    // O importante é que não crasha e o método existe
-    expect(() => store.getState().pickGroupOrder('B', groupB.teams)).not.toThrow()
+    // pickGroupOrder com a mesma ordem → standings não mudam → r32-1 preservado
+    const group = GROUPS.find((g) => g.id === 'A')!
+    store.getState().pickGroupOrder('A', group.teams)
+
+    expect(store.getState().scores['r32-1']).toEqual({ home: 2, away: 1 })
   })
 })
 

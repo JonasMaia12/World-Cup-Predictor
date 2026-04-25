@@ -33,7 +33,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
 
   const firstUnfilledIdx = fixtures.findIndex((f) => scores[f.id] === undefined)
   const [expandedIndex, setExpandedIndex] = useState(firstUnfilledIdx)
-  const [showPositionPicker, setShowPositionPicker] = useState(false)
+  const [showPositionPicker, setShowPositionPicker] = useState(true)
 
   const toggleExpand = (idx: number) => {
     setExpandedIndex((prev) => (prev === idx ? -1 : idx))

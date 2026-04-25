@@ -91,8 +91,8 @@ function DesktopBracket({
   return (
     <div className="overflow-x-auto py-4 px-4">
       <div className="flex items-center justify-center min-w-fit" style={{ gap: 'clamp(12px, 2vw, 32px)' }}>
-        <RoundColumn title="Oitavas" matches={leftR32} onMatchClick={onMatchClick} />
-        <RoundColumn title="R16" matches={leftR16} onMatchClick={onMatchClick} />
+        <RoundColumn title="Rodada de 32" matches={leftR32} onMatchClick={onMatchClick} />
+        <RoundColumn title="Oitavas" matches={leftR16} onMatchClick={onMatchClick} />
         <RoundColumn title="Quartos" matches={leftQF} onMatchClick={onMatchClick} />
         <RoundColumn title="Semis" matches={leftSF} onMatchClick={onMatchClick} />
 
@@ -105,8 +105,8 @@ function DesktopBracket({
 
         <RoundColumn title="Semis" matches={rightSF} onMatchClick={onMatchClick} />
         <RoundColumn title="Quartos" matches={rightQF} onMatchClick={onMatchClick} />
-        <RoundColumn title="R16" matches={rightR16} onMatchClick={onMatchClick} />
-        <RoundColumn title="Oitavas" matches={rightR32} onMatchClick={onMatchClick} />
+        <RoundColumn title="Oitavas" matches={rightR16} onMatchClick={onMatchClick} />
+        <RoundColumn title="Rodada de 32" matches={rightR32} onMatchClick={onMatchClick} />
       </div>
     </div>
   )
@@ -121,8 +121,8 @@ const ROUND_MATCHES: Record<Round, (b: Bracket) => BracketMatch[]> = {
 }
 
 const ROUND_LABELS: Record<Round, string> = {
-  roundOf32:     'Oitavas de Final',
-  roundOf16:     'Rodada de 16',
+  roundOf32:     'Rodada de 32',
+  roundOf16:     'Oitavas de Final',
   quarterFinals: 'Quartas de Final',
   semiFinals:    'Semifinais',
   final:         'Final',

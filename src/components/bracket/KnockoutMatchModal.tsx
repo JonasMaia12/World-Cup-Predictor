@@ -65,7 +65,7 @@ export function KnockoutMatchModal({ match, roundLabel, onClose }: KnockoutMatch
   const simulateKnockoutWinner = useStore((s) => s.simulateKnockoutWinner)
 
   const existing = scores[match.id]
-  const [mode, setMode] = useState<Mode>('exact')
+  const [mode, setMode] = useState<Mode>('winner')
   const [homeGoals, setHomeGoals] = useState(existing?.home ?? 1)
   const [awayGoals, setAwayGoals] = useState(existing?.away ?? 0)
 
