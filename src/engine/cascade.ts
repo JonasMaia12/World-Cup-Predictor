@@ -90,15 +90,14 @@ export function cascadeClearKnockout(
     if (r32) affected.add(r32)
   }
 
-  // 3º lugar mudou? → verificar se ranking de best-3rds mudou
-  if (teamChanged(oldGroup[2], newGroup[2])) {
-    const oldBest = best3rdCodes(oldAllStandings, thirdQualifiers)
-    const newBest = best3rdCodes(newAllStandings, thirdQualifiers)
-    for (let i = 0; i < 8; i++) {
-      if (oldBest[i] !== newBest[i]) {
-        const r32 = THIRD_SLOT_TO_R32[i + 1]
-        if (r32) affected.add(r32)
-      }
+  // 3º lugar — verificar se ranking de best-3rds mudou
+  // (não apenas quando a equipa muda, mas também quando as suas stats mudam)
+  const oldBest = best3rdCodes(oldAllStandings, thirdQualifiers)
+  const newBest = best3rdCodes(newAllStandings, thirdQualifiers)
+  for (let i = 0; i < 8; i++) {
+    if (oldBest[i] !== newBest[i]) {
+      const r32 = THIRD_SLOT_TO_R32[i + 1]
+      if (r32) affected.add(r32)
     }
   }
 

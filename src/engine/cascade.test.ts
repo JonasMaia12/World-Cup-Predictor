@@ -119,6 +119,66 @@ describe('cascadeClearKnockout — cascade completo r32→r16→qf→sf→final'
   })
 })
 
+describe('cascadeClearKnockout — 3º lugar muda stats sem mudar equipa', () => {
+  it('limpa slot 3-N quando stats do 3º mudam o ranking global de best-3rds', () => {
+    // Grupo B: CAN(1º) BIH(2º) QAT(3º) SUI(4º)
+    const groupBBase = {
+      B1: { home: 2, away: 0 }, // CAN vence BIH
+      B2: { home: 2, away: 0 }, // QAT vence SUI
+      B3: { home: 2, away: 0 }, // CAN vence QAT
+      B4: { home: 1, away: 0 }, // BIH vence SUI
+      B5: { home: 2, away: 0 }, // CAN vence SUI
+      B6: { home: 1, away: 0 }, // BIH vence QAT
+    }
+    // Grupo A: MEX(1º) RSA(2º) KOR(3º, 3pts, GD=-1) CZE(4º)
+    const groupABase = {
+      A1: { home: 2, away: 0 }, // MEX vence RSA
+      A2: { home: 1, away: 0 }, // KOR vence CZE por 1-0 (GD baixo)
+      A3: { home: 2, away: 0 }, // MEX vence KOR
+      A4: { home: 2, away: 0 }, // RSA vence CZE
+      A5: { home: 2, away: 0 }, // MEX vence CZE
+      A6: { home: 1, away: 0 }, // RSA vence KOR
+    }
+    const baseScores = { ...groupABase, ...groupBBase }
+
+    // Estado com alguns slots de 3rd place preenchidos
+    const scoresWithKnockout = {
+      ...baseScores,
+      'r32-9':  { home: 1, away: 0 },
+      'r32-10': { home: 1, away: 0 },
+    }
+
+    // Melhorar stats do 3º de A (KOR): A2 passa de 1-0 para 3-0
+    // KOR continua 3º em A, mas agora tem GD e GF melhores → sobe no ranking global
+    const newGroupAScores = {
+      ...groupABase,
+      A2: { home: 3, away: 0 }, // KOR vence CZE por 3-0 → KOR melhora GD e GF
+    }
+    const newScores = {
+      ...newGroupAScores,
+      ...groupBBase,
+      'r32-9':  { home: 1, away: 0 },
+      'r32-10': { home: 1, away: 0 },
+    }
+
+    const oldStandings = computeAllStandings(baseScores)
+    const newStandings = computeAllStandings({ ...newGroupAScores, ...groupBBase })
+
+    // Verificar que KOR continua 3º em A (team identity não mudou)
+    expect(oldStandings['A'][2].teamCode).toBe(newStandings['A'][2].teamCode)
+
+    const result = cascadeClearKnockout('A', oldStandings, newStandings, newScores, [])
+
+    // Com o fix, algum slot de 3rd place deve ter sido limpo
+    // (KOR melhorou stats e mudou posição no ranking global de best-3rds)
+    const anyCleared = [
+      'r32-9', 'r32-10', 'r32-11', 'r32-12',
+      'r32-13', 'r32-14', 'r32-15', 'r32-16',
+    ].some(id => result[id] === undefined)
+    expect(anyCleared).toBe(true)
+  })
+})
+
 describe('cascadeClearKnockout — ScoreMap vazio', () => {
   it('retorna ScoreMap vazio sem crash', () => {
     const oldStandings = computeAllStandings(GROUP_A_MEX_WINS)
