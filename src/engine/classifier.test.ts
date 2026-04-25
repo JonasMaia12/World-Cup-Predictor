@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { classifyGroup } from './classifier'
+import { classifyGroup, computeAllStandings } from './classifier'
 import type { ScoreMap } from './types'
 import { GROUPS } from '@/data/wc2026'
 
@@ -102,5 +102,25 @@ describe('classifyGroup', () => {
     expect(standings[2].points).toBe(2)
     expect(standings[3].teamCode).toBe('CZE')
     expect(standings[3].points).toBe(2)
+  })
+})
+
+describe('computeAllStandings', () => {
+  it('retorna standings para todos os 12 grupos', () => {
+    const result = computeAllStandings({})
+    expect(Object.keys(result)).toHaveLength(12)
+  })
+
+  it('standings de grupo vazio têm 4 equipas com 0 pontos', () => {
+    const result = computeAllStandings({})
+    expect(result['A']).toHaveLength(4)
+    expect(result['A'].every((s) => s.points === 0)).toBe(true)
+  })
+
+  it('reflecte scores injectados no grupo correcto', () => {
+    const result = computeAllStandings({ A1: { home: 2, away: 0 } })
+    const first = result['A'][0]
+    expect(first.teamCode).toBe('MEX')
+    expect(first.points).toBe(3)
   })
 })
