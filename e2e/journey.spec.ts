@@ -124,7 +124,7 @@ test('@slow Jornada completa: grupos → bracket → campeão → share', async 
   await page.waitForTimeout(300)
 
   // Verificar banner de campeão
-  await expect(page.getByTestId('champion-banner')).toBeVisible()
+  await expect(page.getByTestId('champion-card')).toBeVisible()
 
   // FASE 3 — Share
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
@@ -144,5 +144,5 @@ test('@slow Jornada completa: grupos → bracket → campeão → share', async 
   await expect(page2.getByTestId('group-card-A').getByRole('row').nth(1)).toContainText('MEX')
 
   // Verificar banner de campeão restaurado
-  await expect(page2.getByTestId('champion-banner')).toBeVisible()
+  await expect(page2.getByTestId('champion-card')).toBeVisible()
 })

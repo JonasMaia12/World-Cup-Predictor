@@ -141,12 +141,8 @@ describe('cascadeClearKnockout — 3º lugar muda stats sem mudar equipa', () =>
     }
     const baseScores = { ...groupABase, ...groupBBase }
 
-    // Estado com alguns slots de 3rd place preenchidos
-    const scoresWithKnockout = {
-      ...baseScores,
-      'r32-9':  { home: 1, away: 0 },
-      'r32-10': { home: 1, away: 0 },
-    }
+    // Estado com alguns slots de 3rd place preenchidos (apenas usado para oldStandings ref)
+    void { ...baseScores, 'r32-9': { home: 1, away: 0 }, 'r32-10': { home: 1, away: 0 } }
 
     // Melhorar stats do 3º de A (KOR): A2 passa de 1-0 para 3-0
     // KOR continua 3º em A, mas agora tem GD e GF melhores → sobe no ranking global

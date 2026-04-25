@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Bracket, BracketMatch } from '@/engine/types'
 import { TEAMS } from '@/data/wc2026'
 import { BracketMinimap } from './BracketMinimap'
+import { ChampionCard } from './ChampionCard'
 import { cn } from '@/lib/utils'
 
 type Round = 'roundOf32' | 'roundOf16' | 'quarterFinals' | 'semiFinals' | 'final'
@@ -167,21 +168,10 @@ interface BracketViewProps {
 }
 
 export function BracketView({ bracket, champion, onMatchClick }: BracketViewProps) {
-  const championTeam = champion ? TEAMS.find((t) => t.code === champion) : null
-
   return (
     <div>
       {champion && (
-        <div
-          data-testid="champion-banner"
-          className="mx-4 mt-4 mb-2 p-4 rounded-xl border-2 border-wcp-primary bg-wcp-surface-subtle flex items-center justify-center gap-3"
-        >
-          <span className="text-2xl">🏆</span>
-          <span className="font-bold text-lg text-wcp-text">
-            {championTeam?.flag} {champion}
-          </span>
-          <span className="text-wcp-muted text-sm">É o Campeão do Mundo!</span>
-        </div>
+        <ChampionCard champion={champion} bracket={bracket} />
       )}
       <div className="hidden md:block">
         <DesktopBracket bracket={bracket} onMatchClick={onMatchClick} />
