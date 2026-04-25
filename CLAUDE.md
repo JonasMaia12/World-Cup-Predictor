@@ -11,10 +11,11 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 | Frontend | Vite + React 19 + TypeScript |
 | UI | Shadcn/UI + Tailwind (cssVariables, tokens `wcp-*`) |
 | Estado | Zustand + persist (`wcp2026-state` → LocalStorage) |
-| Data fetching | TanStack Query v5 (staleTime 5min, refetchOnWindowFocus: false) |
 | Testes unitários | Vitest |
 | Testes E2E | Playwright |
 | Deploy | GitHub Pages + GitHub Actions |
+
+> **Nota:** `@tanstack/react-query` foi removido (não havia queries ativas). Será readicionado na Fase 12 (placar ao vivo).
 
 ---
 
@@ -24,13 +25,13 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 - Layout: coluna única full-width — Header → GroupGrid (cards responsivos) → Bracket
 - Bracket: "espinha de peixe" convergindo para o centro (Final); mobile = minimap + cards por rodada
 - Tema: **Cyber Green Light** — fundo `#f0f4f1`, verde neon `#00a854`, texto `#1a2a1a`
-- Estado: Zustand + TanStack Query — sem Context API ou Redux
+- Estado: Zustand — sem Context API ou Redux
 
 ---
 
 ## API Externa — football-data.org
 
-- Tier gratuito: **10 req/min** — sempre usar `staleTime: 5 * 60 * 1000`
+- Tier gratuito: **10 req/min** — usar `staleTime: 5 * 60 * 1000` quando implementado
 - Chave: `VITE_FOOTBALL_API_KEY` em `.env.local` (nunca commitar)
 
 ---
@@ -40,15 +41,22 @@ Simulador interativo da Copa do Mundo 2026: placares da fase de grupos → class
 ```
 src/
 ├── engine/        ← Lógica FIFA pura (zero React, TDD)
+│   ├── types.ts
+│   ├── classifier.ts      ← standings + computeAllStandings
+│   ├── tiebreaker.ts
+│   ├── bracket-generator.ts
+│   ├── simulator.ts       ← Poisson + ranking FIFA
+│   ├── cascade.ts         ← cascadeClearKnockout (BFS)
+│   └── group-position.ts  ← generateGroupScoresForOrder
 ├── store/         ← Zustand slices (tournament + ui) + persist
-├── hooks/         ← useShareLink, useH2H (TanStack Query)
+├── hooks/         ← useShareLink
 ├── components/
-│   ├── layout/    ← AppShell (header + logo + share button + layout)
-│   ├── groups/    ← GroupCard, GroupGrid, MatchModal, MatchRow (stepper)
-│   ├── bracket/   ← BracketView (espinha de peixe), BracketMinimap
+│   ├── layout/    ← AppShell
+│   ├── groups/    ← GroupCard, GroupGrid, MatchModal, MatchRow, GroupPositionPicker
+│   ├── bracket/   ← BracketView, BracketMinimap, KnockoutMatchModal, ChampionCard
 │   └── share/     ← ShareButton
 ├── data/          ← wc2026.ts (48 times, 12 grupos, fixtures FIFA 2026)
-└── lib/           ← query-client.ts
+└── lib/           ← share.ts, utils.ts
 ```
 
 ---
@@ -87,17 +95,36 @@ colors: {
 ## Status das Fases
 
 - ✅ **Fase 1** — Engine FIFA (classifier, tiebreaker, bracket-generator) com TDD, ≥90% cobertura
-- ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView, Sidebar, ContentArea — 23 testes, build limpo
-- ✅ **Fase 3** — E2E & Estabilidade (Playwright 6 testes, CI verde, deploy GitHub Pages)
-- ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes, @claude aprovado
-- ✅ **Fase 5** — Community Stats (removida): feature estava incompleta (sem write path); Turso + @libsql/client removidos da stack em 2026-04-19
-- ✅ **Fase 6** — Redesign Cyber Green Light: nova paleta, sem sidebar, accordion de grupos, stepper +/−, bracket espinha de peixe — 49 testes, @claude aprovado
-- ✅ **Fase 7** — UX Improvements: GroupGrid responsivo (1→4 cols), MatchModal gamificado com reveal progressivo, bracket overflow fix + clamp() responsivo — 69 testes, build limpo
-- ✅ **Fase 8** — MatchModal accordion puro: todos os 6 jogos visíveis desde o início, collapse header por jogo, sem auto-advance; MatchRow compact distingue preenchido (✓) de vazio (›) — 71 testes, @claude aprovado
-- 🔧 **Limpeza pós-fase 8** — Turso/libsql removido completamente; 64 testes, build limpo
-- ✅ **Fase 9** — Simulador automático (Poisson + ranking FIFA), reset por partida (✕ compact + "Limpar placar"), info de jogo (data/horário timezone automático/sede) — 79 testes, @claude aprovado
-- ✅ **Fase 10** — Bracket interactivo: KnockoutMatchModal (placar exato / só vencedor), cascata r32→final, banner campeão, GroupPositionPicker (reordenar + pool de 3.os), botão "Limpar tudo" — 129 testes, @claude aprovado
-- ✅ **Fase 11** — Cascade knockout + E2E completo: cascade-clear scores knockout quando grupo muda (setScore/clearScore/pickGroupOrder), E2E journey completo + 11 testes adversariais — 146 unit + 20 E2E, @claude aprovado
+- ✅ **Fase 2** — UI reativa: GroupTable, MatchRow, BracketView — 23 testes, build limpo
+- ✅ **Fase 3** — E2E & Estabilidade (Playwright, CI verde, deploy GitHub Pages)
+- ✅ **Fase 4** — Social: ShareButton (URL ?s= base64url), OG meta tags, og-image.png — 34 testes
+- ✅ **Fase 5** — Community Stats (removida): Turso + @libsql/client removidos; feature descontinuada
+- ✅ **Fase 6** — Redesign Cyber Green Light: nova paleta, accordion de grupos, stepper +/−, bracket espinha de peixe — 49 testes
+- ✅ **Fase 7** — UX Improvements: GroupGrid responsivo (1→4 cols), bracket overflow fix — 69 testes
+- ✅ **Fase 8** — MatchModal accordion puro: 6 jogos visíveis, collapse por jogo, compact ✓/› — 71 testes
+- ✅ **Fase 9** — Simulador automático (Poisson + ranking FIFA), reset por partida, info de jogo — 79 testes
+- ✅ **Fase 10** — Bracket interactivo: KnockoutMatchModal, cascata r32→final, ChampionCard, GroupPositionPicker, "Limpar tudo" — 129 testes
+- ✅ **Fase 11** — Cascade knockout + E2E completo + ChampionCard animado com trajetória — 146 unit + 20 E2E
+
+---
+
+## Backlog (por ordem de prioridade)
+
+### Fase 12 — Placar ao vivo *(quando a Copa 2026 iniciar, junho 2026)*
+Integrar football-data.org para preencher resultados reais automaticamente:
+- Readicionar `@tanstack/react-query` (`npm install @tanstack/react-query`)
+- Criar `src/hooks/useH2H.ts` e `src/hooks/useLiveScores.ts`
+- Auto-fill group scores a partir da API; bracket atualiza em tempo real
+- Respeitar limite: `staleTime: 5 * 60 * 1000`, `refetchOnWindowFocus: false`
+
+### Fase 13 — Acertômetro *(depende da Fase 12)*
+Comparar o bracket do utilizador com os resultados reais e dar pontuação:
+- Score por fase (r32, r16, qf, sf, final, campeão)
+- Ranking persistido em LocalStorage
+- Partilhar pontuação via URL existente
+
+### Tech Debt documentado
+- **Cascade knockout→knockout**: mudar o vencedor de `r32-1` depois de `r16-1`, `qf-1`, sf e final já preenchidos não limpa os rounds downstream. A infraestrutura (`cascadeClearKnockout`) já existe — falta um `KNOCKOUT_CHILDREN` map em `simulateKnockoutWinner` e no branch knockout de `setScore`.
 
 ---
 
@@ -106,8 +133,8 @@ colors: {
 ```bash
 npm run dev          # dev server
 npm run build        # build de produção
-npm run test         # vitest
-npm run test:e2e     # playwright
+npm run test         # vitest (146 testes)
+npm run test:e2e     # playwright (20 testes)
 npm run coverage     # vitest com cobertura
 ```
 
@@ -160,4 +187,4 @@ gh pr comment <número> --body "@claude please review this PR"
 - 48 seleções, 12 grupos de 4 — classificam os 2 primeiros + 8 melhores terceiros = 32 times
 - Bracket com chaves pré-definidas pela FIFA (não sorteio pós-grupos)
 - Critérios de desempate: H2H pts → H2H GD → H2H GF → GD geral → GF geral → ordem do sorteio
-- Vencedores das rodadas eliminatórias não são resolvidos automaticamente pelo engine (bracket é read-only após grupos)
+- Copa começa em junho 2026 — antes disso, todos os resultados são previsões do utilizador
