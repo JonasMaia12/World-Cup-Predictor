@@ -83,7 +83,11 @@ export const createTournamentSlice: StateCreator<TournamentSlice> = (set) => ({
     set((state) => {
       const fixtures = FIXTURES.filter((f) => f.group === groupId)
       const newScores = generateGroupScoresForOrder(orderedTeams, fixtures, TEAMS)
-      return { scores: { ...state.scores, ...newScores } }
+      const merged = { ...state.scores, ...newScores }
+      const oldAllStandings = computeAllStandings(state.scores)
+      const newAllStandings = computeAllStandings(merged)
+      const cleanScores = cascadeClearKnockout(groupId, oldAllStandings, newAllStandings, merged, state.thirdQualifiers)
+      return { scores: cleanScores }
     }),
 
   addThirdQualifier: (groupId) =>
