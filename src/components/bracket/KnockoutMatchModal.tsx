@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useStore } from '@/store'
 import { TEAMS } from '@/data/wc2026'
@@ -66,6 +66,12 @@ export function KnockoutMatchModal({ match, roundLabel, onClose }: KnockoutMatch
 
   const existing = scores[match.id]
   const [mode, setMode] = useState<Mode>('winner')
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
   const [homeGoals, setHomeGoals] = useState(existing?.home ?? 1)
   const [awayGoals, setAwayGoals] = useState(existing?.away ?? 0)
 

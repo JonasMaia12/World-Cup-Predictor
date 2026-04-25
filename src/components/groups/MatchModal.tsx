@@ -133,6 +133,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
                   {/* Clear score */}
                   {hasScore && (
                     <button
+                      data-testid={`clear-score-${match.id}`}
                       onClick={() => handleClear(match.id)}
                       className="text-[10px] text-wcp-muted hover:text-wcp-text py-2 transition-colors"
                     >
