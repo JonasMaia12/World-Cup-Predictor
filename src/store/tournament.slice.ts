@@ -3,6 +3,8 @@ import type { ScoreMap } from '@/engine/types'
 import { simulateMissingMatches, simulateKnockoutMatch } from '@/engine/simulator'
 import { generateGroupScoresForOrder } from '@/engine/group-position'
 import { FIXTURES, TEAMS } from '@/data/wc2026'
+import { computeAllStandings } from '@/engine/classifier'
+import { cascadeClearKnockout } from '@/engine/cascade'
 
 export interface TournamentSlice {
   scores: ScoreMap
@@ -24,14 +26,26 @@ export interface TournamentSlice {
   removeThirdQualifier: (groupId: string) => void
 }
 
+function getGroupId(matchId: string): string | null {
+  return /^[A-L]\d$/.test(matchId) ? matchId[0] : null
+}
+
 export const createTournamentSlice: StateCreator<TournamentSlice> = (set) => ({
   scores: {},
   thirdQualifiers: [],
 
   setScore: (matchId, home, away) =>
-    set((state) => ({
-      scores: { ...state.scores, [matchId]: { home, away } },
-    })),
+    set((state) => {
+      const groupId = getGroupId(matchId)
+      if (!groupId) {
+        return { scores: { ...state.scores, [matchId]: { home, away } } }
+      }
+      const oldAllStandings = computeAllStandings(state.scores)
+      const newScores = { ...state.scores, [matchId]: { home, away } }
+      const newAllStandings = computeAllStandings(newScores)
+      const cleanScores = cascadeClearKnockout(groupId, oldAllStandings, newAllStandings, newScores, state.thirdQualifiers)
+      return { scores: cleanScores }
+    }),
 
   setScores: (scores) => set({ scores }),
 
@@ -41,8 +55,15 @@ export const createTournamentSlice: StateCreator<TournamentSlice> = (set) => ({
 
   clearScore: (matchId) =>
     set((state) => {
+      const groupId = getGroupId(matchId)
       const { [matchId]: _removed, ...rest } = state.scores
-      return { scores: rest }
+      if (!groupId) {
+        return { scores: rest }
+      }
+      const oldAllStandings = computeAllStandings(state.scores)
+      const newAllStandings = computeAllStandings(rest)
+      const cleanScores = cascadeClearKnockout(groupId, oldAllStandings, newAllStandings, rest, state.thirdQualifiers)
+      return { scores: cleanScores }
     }),
 
   simulateMissing: () =>
