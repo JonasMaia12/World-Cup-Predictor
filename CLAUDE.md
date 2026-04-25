@@ -97,12 +97,7 @@ colors: {
 - 🔧 **Limpeza pós-fase 8** — Turso/libsql removido completamente; 64 testes, build limpo
 - ✅ **Fase 9** — Simulador automático (Poisson + ranking FIFA), reset por partida (✕ compact + "Limpar placar"), info de jogo (data/horário timezone automático/sede) — 79 testes, @claude aprovado
 - ✅ **Fase 10** — Bracket interactivo: KnockoutMatchModal (placar exato / só vencedor), cascata r32→final, banner campeão, GroupPositionPicker (reordenar + pool de 3.os), botão "Limpar tudo" — 129 testes, @claude aprovado
-
----
-
-## Tech Debt Conhecido
-
-- **Scores de knockout obsoletos** — ao alterar um resultado de grupo (ou usar `pickGroupOrder`), os scores de rounds downstream (r16, qf…) ficam no store com valores antigos aplicados aos novos pares de equipas. Solução: cascade-clear dos scores knockout quando um score de grupo é alterado/reposto.
+- ✅ **Fase 11** — Cascade knockout + E2E completo: cascade-clear scores knockout quando grupo muda (setScore/clearScore/pickGroupOrder), E2E journey completo + 11 testes adversariais — 146 unit + 20 E2E, @claude aprovado
 
 ---
 

@@ -4,11 +4,23 @@ import { MatchModal } from './MatchModal'
 import { useStore, type StoreState } from '@/store'
 
 const mockSetScore = vi.fn()
+const mockClearScore = vi.fn()
+const mockPickGroupOrder = vi.fn()
+const mockAddThirdQualifier = vi.fn()
+const mockRemoveThirdQualifier = vi.fn()
 let mockScores: Record<string, { home: number; away: number }> = {}
 
 vi.mock('@/store', () => ({
   useStore: vi.fn((sel: (s: unknown) => unknown) =>
-    sel({ scores: mockScores, setScore: mockSetScore })
+    sel({
+      scores: mockScores,
+      setScore: mockSetScore,
+      clearScore: mockClearScore,
+      thirdQualifiers: [],
+      pickGroupOrder: mockPickGroupOrder,
+      addThirdQualifier: mockAddThirdQualifier,
+      removeThirdQualifier: mockRemoveThirdQualifier,
+    })
   ),
 }))
 
@@ -27,13 +39,24 @@ vi.mock('@/data/wc2026', () => ({
     { code: 'KOR', name: 'Coreia do Sul', flag: '🇰🇷', group: 'A' },
     { code: 'CZE', name: 'Tchéquia', flag: '🇨🇿', group: 'A' },
   ],
+  GROUPS: [{ id: 'A', teams: ['MEX', 'RSA', 'KOR', 'CZE'] }],
 }))
 
 beforeEach(() => {
   mockScores = {}
   mockSetScore.mockClear()
+  mockClearScore.mockClear()
+  mockPickGroupOrder.mockClear()
   vi.mocked(useStore).mockImplementation((sel: (s: StoreState) => unknown) =>
-    sel({ scores: mockScores, setScore: mockSetScore } as unknown as StoreState)
+    sel({
+      scores: mockScores,
+      setScore: mockSetScore,
+      clearScore: mockClearScore,
+      thirdQualifiers: [],
+      pickGroupOrder: mockPickGroupOrder,
+      addThirdQualifier: mockAddThirdQualifier,
+      removeThirdQualifier: mockRemoveThirdQualifier,
+    } as unknown as StoreState)
   )
 })
 
@@ -121,7 +144,7 @@ describe('MatchModal', () => {
       A5: { home: 3, away: 0 },
     }
     vi.mocked(useStore).mockImplementation((sel: (s: StoreState) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore } as unknown as StoreState)
+      sel({ scores: mockScores, setScore: mockSetScore, clearScore: mockClearScore, thirdQualifiers: [], pickGroupOrder: mockPickGroupOrder, addThirdQualifier: mockAddThirdQualifier, removeThirdQualifier: mockRemoveThirdQualifier } as unknown as StoreState)
     )
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
     // A6 is the first unfilled → should be expanded
@@ -138,7 +161,7 @@ describe('MatchModal', () => {
       A6: { home: 1, away: 1 },
     }
     vi.mocked(useStore).mockImplementation((sel: (s: StoreState) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore } as unknown as StoreState)
+      sel({ scores: mockScores, setScore: mockSetScore, clearScore: mockClearScore, thirdQualifiers: [], pickGroupOrder: mockPickGroupOrder, addThirdQualifier: mockAddThirdQualifier, removeThirdQualifier: mockRemoveThirdQualifier } as unknown as StoreState)
     )
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
     // No steppers visible
@@ -159,7 +182,7 @@ describe('MatchModal', () => {
       A6: { home: 1, away: 1 },
     }
     vi.mocked(useStore).mockImplementation((sel: (s: StoreState) => unknown) =>
-      sel({ scores: mockScores, setScore: mockSetScore } as unknown as StoreState)
+      sel({ scores: mockScores, setScore: mockSetScore, clearScore: mockClearScore, thirdQualifiers: [], pickGroupOrder: mockPickGroupOrder, addThirdQualifier: mockAddThirdQualifier, removeThirdQualifier: mockRemoveThirdQualifier } as unknown as StoreState)
     )
     render(<MatchModal groupId="A" onClose={vi.fn()} />)
     expect(screen.getByText('6/6')).toBeInTheDocument()

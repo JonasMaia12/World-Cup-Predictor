@@ -1,6 +1,6 @@
-import { FIXTURES } from '@/data/wc2026'
+import { FIXTURES, GROUPS } from '@/data/wc2026'
 import type { Group } from '@/data/wc2026'
-import type { ScoreMap, Standing } from './types'
+import type { ScoreMap, Standing, GroupStandings } from './types'
 import { applyTiebreakers } from './tiebreaker'
 
 export function classifyGroup(group: Group, scores: ScoreMap): Standing[] {
@@ -67,5 +67,13 @@ export function classifyGroup(group: Group, scores: ScoreMap): Standing[] {
     i = j
   }
 
+  return result
+}
+
+export function computeAllStandings(scores: ScoreMap): GroupStandings {
+  const result: GroupStandings = {}
+  for (const group of GROUPS) {
+    result[group.id] = classifyGroup(group, scores)
+  }
   return result
 }

@@ -3,6 +3,11 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { BracketView } from './BracketView'
 import type { Bracket } from '@/engine/types'
 
+vi.mock('@/store', () => ({
+  useStore: (selector: (s: { scores: Record<string, never> }) => unknown) =>
+    selector({ scores: {} }),
+}))
+
 function makeEmptyBracket(): Bracket {
   const emptyMatch = (id: string) => ({ id, home: null, away: null })
   return {
@@ -34,14 +39,14 @@ describe('BracketView', () => {
     expect(screen.getAllByTestId(/bracket-match/).length).toBeGreaterThan(0)
   })
 
-  it('shows champion banner when champion prop is provided', () => {
+  it('shows champion card when champion prop is provided', () => {
     render(<BracketView bracket={makeEmptyBracket()} champion="ARG" />)
-    expect(screen.getByTestId('champion-banner')).toBeInTheDocument()
+    expect(screen.getByTestId('champion-card')).toBeInTheDocument()
   })
 
-  it('does not show champion banner when champion is null', () => {
+  it('does not show champion card when champion is null', () => {
     render(<BracketView bracket={makeEmptyBracket()} champion={null} />)
-    expect(screen.queryByTestId('champion-banner')).toBeNull()
+    expect(screen.queryByTestId('champion-card')).toBeNull()
   })
 
   it('calls onMatchClick when a bracket match card is clicked', () => {

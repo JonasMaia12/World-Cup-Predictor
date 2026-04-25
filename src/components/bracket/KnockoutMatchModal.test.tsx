@@ -43,6 +43,8 @@ describe('KnockoutMatchModal', () => {
 
   it('confirm button is disabled when score is tied', () => {
     render(<KnockoutMatchModal match={filledMatch} roundLabel="Oitavas" onClose={vi.fn()} />)
+    // Switch to exact mode first (default is winner)
+    fireEvent.click(screen.getByTestId('mode-exact'))
     // Default 1-0. Make it 1-1 by incrementing away.
     fireEvent.click(screen.getByTestId('away-plus-r32-1'))
     expect(screen.getByTestId('confirm-r32-1')).toBeDisabled()
@@ -53,6 +55,8 @@ describe('KnockoutMatchModal', () => {
     const onClose = vi.fn()
     mockStore({ setScore })
     render(<KnockoutMatchModal match={filledMatch} roundLabel="Oitavas" onClose={onClose} />)
+    // Switch to exact mode first (default is winner)
+    fireEvent.click(screen.getByTestId('mode-exact'))
     // Default 1-0 (non-tie)
     fireEvent.click(screen.getByTestId('confirm-r32-1'))
     expect(setScore).toHaveBeenCalledWith('r32-1', 1, 0)

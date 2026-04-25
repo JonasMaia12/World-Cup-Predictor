@@ -112,6 +112,49 @@ describe('TournamentSlice — pickGroupOrder', () => {
   })
 })
 
+describe('TournamentSlice — cascade knockout em pickGroupOrder', () => {
+  it('limpa r32-1 e r32-2 quando pickGroupOrder altera a ordem do Grupo A', () => {
+    const store = makeStore()
+    // Grupo A completo com MEX em 1º
+    store.getState().setScore('A1', 2, 0)
+    store.getState().setScore('A2', 1, 0)
+    store.getState().setScore('A3', 2, 0)
+    store.getState().setScore('A4', 2, 0)
+    store.getState().setScore('A5', 2, 0)
+    store.getState().setScore('A6', 1, 0)
+    // Injectar scores knockout
+    store.getState().setScores({ ...store.getState().scores, 'r32-1': { home: 2, away: 1 }, 'r32-2': { home: 3, away: 0 } })
+    expect(store.getState().scores['r32-1']).toBeDefined()
+    expect(store.getState().scores['r32-2']).toBeDefined()
+
+    // pickGroupOrder com ordem invertida → 1º e 2º mudam
+    const group = GROUPS.find((g) => g.id === 'A')!
+    store.getState().pickGroupOrder('A', [...group.teams].reverse())
+
+    // r32-1 e r32-2 devem estar limpos
+    expect(store.getState().scores['r32-1']).toBeUndefined()
+    expect(store.getState().scores['r32-2']).toBeUndefined()
+  })
+
+  it('NÃO limpa r32-1 se pickGroupOrder aplica a mesma ordem do Grupo A', () => {
+    const store = makeStore()
+    // Grupo A completo com MEX em 1º (igual ao teste anterior)
+    store.getState().setScore('A1', 2, 0)
+    store.getState().setScore('A2', 1, 0)
+    store.getState().setScore('A3', 2, 0)
+    store.getState().setScore('A4', 2, 0)
+    store.getState().setScore('A5', 2, 0)
+    store.getState().setScore('A6', 1, 0)
+    store.getState().setScores({ ...store.getState().scores, 'r32-1': { home: 2, away: 1 } })
+
+    // pickGroupOrder com a mesma ordem → standings não mudam → r32-1 preservado
+    const group = GROUPS.find((g) => g.id === 'A')!
+    store.getState().pickGroupOrder('A', group.teams)
+
+    expect(store.getState().scores['r32-1']).toEqual({ home: 2, away: 1 })
+  })
+})
+
 describe('TournamentSlice — addThirdQualifier / removeThirdQualifier', () => {
   it('adds a group to thirdQualifiers', () => {
     const store = makeStore()
@@ -141,5 +184,75 @@ describe('TournamentSlice — addThirdQualifier / removeThirdQualifier', () => {
     store.getState().addThirdQualifier('A')
     store.getState().removeThirdQualifier('A')
     expect(store.getState().thirdQualifiers).not.toContain('A')
+  })
+})
+
+describe('TournamentSlice — cascade knockout em setScore', () => {
+  it('limpa r32-1 quando 1º de A muda após setScore', () => {
+    const store = makeStore()
+    // Grupo A completo: MEX 1º
+    store.getState().setScore('A1', 2, 0)
+    store.getState().setScore('A2', 1, 0)
+    store.getState().setScore('A3', 2, 0)
+    store.getState().setScore('A4', 2, 0)
+    store.getState().setScore('A5', 2, 0)
+    store.getState().setScore('A6', 1, 0)
+    // Injectar score knockout directamente via setScores
+    store.getState().setScores({ ...store.getState().scores, 'r32-1': { home: 2, away: 1 } })
+    expect(store.getState().scores['r32-1']).toBeDefined()
+
+    // RSA vence MEX (RSA é away em A1) → RSA fica 1º
+    store.getState().setScore('A1', 0, 3)
+
+    expect(store.getState().scores['r32-1']).toBeUndefined()
+  })
+
+  it('NÃO limpa r32-1 se 1º de A não muda (só margem)', () => {
+    const store = makeStore()
+    store.getState().setScore('A1', 2, 0)
+    store.getState().setScore('A3', 2, 0)
+    store.getState().setScore('A5', 2, 0)
+    store.getState().setScores({ ...store.getState().scores, 'r32-1': { home: 2, away: 1 } })
+
+    // Margem muda: 2-0 → 3-0, MEX continua 1º
+    store.getState().setScore('A1', 3, 0)
+
+    expect(store.getState().scores['r32-1']).toEqual({ home: 2, away: 1 })
+  })
+
+  it('não cascata em setScore de um jogo knockout', () => {
+    const store = makeStore()
+    store.getState().setScores({ 'r32-1': { home: 2, away: 1 }, 'r16-1': { home: 1, away: 0 } })
+    // setScore de r32-1 (knockout) não deve limpar r16-1
+    store.getState().setScore('r32-1', 3, 1)
+    expect(store.getState().scores['r16-1']).toEqual({ home: 1, away: 0 })
+  })
+})
+
+describe('TournamentSlice — cascade knockout em clearScore', () => {
+  it('limpa r32-1 quando clearScore remove um score que afectava o 1º de A', () => {
+    const store = makeStore()
+    // Cenário: MEX=3pts (vence A1), KOR=3pts (vence A3 away) — empatados
+    // H2H A3 (MEX vs KOR): KOR vence → KOR fica 1º por H2H
+    // A1: MEX 2-0 RSA (MEX home wins)
+    store.getState().setScore('A1', 2, 0)
+    // A3: MEX 0-2 KOR (KOR away wins)
+    store.getState().setScore('A3', 0, 2)
+    store.getState().setScores({ ...store.getState().scores, 'r32-1': { home: 2, away: 1 } })
+    expect(store.getState().scores['r32-1']).toBeDefined()
+
+    // clearScore de A3 → KOR perde os 3pts, fica 0pts; MEX fica 3pts → MEX sobe para 1º
+    // A equipa no 1º lugar muda de KOR para MEX → r32-1 deve ser apagado
+    store.getState().clearScore('A3')
+
+    expect(store.getState().scores['r32-1']).toBeUndefined()
+  })
+
+  it('não cascata em clearScore de um jogo knockout', () => {
+    const store = makeStore()
+    store.getState().setScores({ 'r32-1': { home: 2, away: 1 }, 'r16-1': { home: 1, away: 0 } })
+    store.getState().clearScore('r32-1')
+    // clearScore de knockout não deve afectar r16-1
+    expect(store.getState().scores['r16-1']).toEqual({ home: 1, away: 0 })
   })
 })
