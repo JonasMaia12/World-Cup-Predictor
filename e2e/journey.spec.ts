@@ -1,6 +1,16 @@
 import { test, expect } from '@playwright/test'
-import { openGroupModal, closeModal, fillGroupScores, injectScores } from './helpers'
+import { injectState } from './helpers'
 import type { ScoreMap } from '../src/engine/types'
+
+const GROUP_A_MEX_WINS: ScoreMap = {
+  A1:{home:2,away:0}, A2:{home:1,away:0}, A3:{home:2,away:0},
+  A4:{home:2,away:0}, A5:{home:2,away:0}, A6:{home:1,away:0},
+}
+
+const GROUP_C_BRA_WINS: ScoreMap = {
+  C1:{home:3,away:0}, C2:{home:0,away:1}, C3:{home:2,away:0},
+  C4:{home:2,away:1}, C5:{home:2,away:0}, C6:{home:1,away:0},
+}
 
 const TEN_GROUPS_SCORES: ScoreMap = {
   // B: CAN BIH QAT SUI
@@ -25,6 +35,12 @@ const TEN_GROUPS_SCORES: ScoreMap = {
   L1:{home:2,away:0},L2:{home:2,away:0},L3:{home:2,away:0},L4:{home:1,away:0},L5:{home:2,away:0},L6:{home:1,away:0},
 }
 
+const ALL_SCORES: ScoreMap = {
+  ...GROUP_A_MEX_WINS,
+  ...GROUP_C_BRA_WINS,
+  ...TEN_GROUPS_SCORES,
+}
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.removeItem('wcp2026-state')
@@ -35,34 +51,12 @@ test.beforeEach(async ({ page }) => {
 test('@slow Jornada completa: grupos → bracket → campeão → share', async ({ page, context }) => {
   test.slow()
 
-  // FASE 1 — Grupos manuais (A e C)
-  await openGroupModal(page, 'A')
-  await fillGroupScores(page, {
-    A1: [2, 0], A2: [1, 0], A3: [2, 0], A4: [2, 0], A5: [2, 0], A6: [1, 0],
-  })
-  await closeModal(page)
+  // FASE 1 — Injectar todos os grupos + thirdQualifiers de uma vez
+  // injectState usa addInitScript (corre após o beforeEach's remove-script)
+  // garantindo que o state sobrevive ao page.reload() interno
+  await injectState(page, ALL_SCORES, ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
 
-  await openGroupModal(page, 'C')
-  await fillGroupScores(page, {
-    C1: [3, 0], C2: [0, 1], C3: [2, 0], C4: [2, 1], C5: [2, 0], C6: [1, 0],
-  })
-  await closeModal(page)
-
-  // Injectar os 10 grupos restantes via localStorage (B, D-L)
-  await injectScores(page, TEN_GROUPS_SCORES)
-
-  // Injectar thirdQualifiers para preencher os 8 slots 3º lugar no r32
-  await page.evaluate(() => {
-    const stored = JSON.parse(localStorage.getItem('wcp2026-state') || '{"state":{}}')
-    stored.state.thirdQualifiers = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-    localStorage.setItem('wcp2026-state', JSON.stringify(stored))
-  })
-
-  // Recarregar para Zustand hidratár com todos os scores
-  await page.reload()
-  await page.waitForLoadState('networkidle')
-
-  // Verificar standings de A e C
+  // Verificar standings: MEX 1º em A, BRA 1º em C
   const cardA = page.getByTestId('group-card-A')
   await expect(cardA.getByRole('row').nth(1)).toContainText('MEX')
 
@@ -80,7 +74,6 @@ test('@slow Jornada completa: grupos → bracket → campeão → share', async 
     const slot = page.getByTestId(`bracket-match-r32-${i}`).first()
     await slot.scrollIntoViewIfNeeded()
     await slot.click()
-    // Esperar que o modal abra (mode-winner é o default)
     await page.getByTestId(/^winner-/).first().waitFor()
     await page.getByTestId(/^winner-/).first().click()
     await page.waitForTimeout(150)
@@ -123,7 +116,7 @@ test('@slow Jornada completa: grupos → bracket → campeão → share', async 
   await page.getByTestId(/^winner-/).first().click()
   await page.waitForTimeout(300)
 
-  // Verificar banner de campeão
+  // Verificar card de campeão
   await expect(page.getByTestId('champion-card')).toBeVisible()
 
   // FASE 3 — Share
@@ -143,6 +136,6 @@ test('@slow Jornada completa: grupos → bracket → campeão → share', async 
   // Verificar standings restauradas via GroupCard (MEX 1º no grupo A)
   await expect(page2.getByTestId('group-card-A').getByRole('row').nth(1)).toContainText('MEX')
 
-  // Verificar banner de campeão restaurado
+  // Verificar card de campeão restaurado
   await expect(page2.getByTestId('champion-card')).toBeVisible()
 })

@@ -171,7 +171,7 @@ export function BracketView({ bracket, champion, onMatchClick }: BracketViewProp
   return (
     <div>
       {champion && (
-        <ChampionCard champion={champion} bracket={bracket} />
+        <ChampionCard key={champion} champion={champion} bracket={bracket} />
       )}
       <div className="hidden md:block">
         <DesktopBracket bracket={bracket} onMatchClick={onMatchClick} />
