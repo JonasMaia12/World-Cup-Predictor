@@ -3,6 +3,12 @@ import type { Page } from '@playwright/test'
 export async function openGroupModal(page: Page, groupLetter: string) {
   await page.getByTestId(`group-card-${groupLetter}`).click()
   await page.getByRole('heading', { name: `Grupo ${groupLetter}` }).waitFor()
+  // Close position picker so the match list is fully accessible
+  const cancelPicker = page.getByTestId('cancel-picker')
+  if (await cancelPicker.isVisible()) {
+    await cancelPicker.click()
+    await page.waitForTimeout(100)
+  }
 }
 
 export async function closeModal(page: Page) {
@@ -21,6 +27,12 @@ export async function fillGroupScores(
   page: Page,
   scores: Record<string, [number, number]>,
 ) {
+  // Close position picker if it's open (it opens by default)
+  const cancelPicker = page.getByTestId('cancel-picker')
+  if (await cancelPicker.isVisible()) {
+    await cancelPicker.click()
+    await page.waitForTimeout(100)
+  }
   for (const [matchId, [home, away]] of Object.entries(scores)) {
     for (let i = 0; i < home; i++) {
       await ensureExpanded(page, matchId)

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { ensureExpanded } from './helpers'
+import { ensureExpanded, openGroupModal } from './helpers'
 
 test.beforeEach(async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
@@ -10,9 +10,7 @@ test.beforeEach(async ({ page, context }) => {
 })
 
 test('share button copia URL com ?s= para o clipboard', async ({ page }) => {
-  // Open group A modal to access steppers
-  await page.getByTestId('group-card-A').click()
-  await page.getByRole('heading', { name: 'Grupo A' }).waitFor()
+  await openGroupModal(page, 'A')
 
   // Score A1: home=2 (first click sets score → compact; re-expand for second click)
   await ensureExpanded(page, 'A1')
@@ -31,8 +29,7 @@ test('share button copia URL com ?s= para o clipboard', async ({ page }) => {
 
 test('URL compartilhada restaura o estado do bracket ao carregar', async ({ page, context }) => {
   // Open group A modal, fill score A1: 3-1
-  await page.getByTestId('group-card-A').click()
-  await page.getByRole('heading', { name: 'Grupo A' }).waitFor()
+  await openGroupModal(page, 'A')
 
   // Score A1: home=3, away=1 (re-expand between clicks since first click makes it compact)
   for (let i = 0; i < 3; i++) {
@@ -56,8 +53,7 @@ test('URL compartilhada restaura o estado do bracket ao carregar', async ({ page
   await page2.goto(sharedUrl)
 
   // Open modal for group A — A1 is already scored so it's compact
-  await page2.getByTestId('group-card-A').click()
-  await page2.getByRole('heading', { name: 'Grupo A' }).waitFor()
+  await openGroupModal(page2, 'A')
 
   // A1 is compact — re-expand it to see steppers
   await page2.getByTestId('compact-A1').click()
