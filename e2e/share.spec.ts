@@ -1,13 +1,5 @@
-import { test, expect, type Page } from '@playwright/test'
-
-// Ensure a match is expanded (not compact) inside the open modal.
-async function ensureExpanded(page: Page, matchId: string) {
-  const compact = page.getByTestId(`compact-${matchId}`)
-  if (await compact.isVisible()) {
-    await compact.click()
-    await page.waitForTimeout(50)
-  }
-}
+import { test, expect } from '@playwright/test'
+import { ensureExpanded } from './helpers'
 
 test.beforeEach(async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])

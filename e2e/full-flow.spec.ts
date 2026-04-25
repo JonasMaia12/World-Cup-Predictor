@@ -1,42 +1,5 @@
-import { test, expect, type Page } from '@playwright/test'
-
-// Open a group modal
-async function openGroupModal(page: Page, groupLetter: string) {
-  await page.getByTestId(`group-card-${groupLetter}`).click()
-  // Wait for modal heading to appear (strict: targets only the h2 in the modal)
-  await page.getByRole('heading', { name: `Grupo ${groupLetter}` }).waitFor()
-}
-
-// Close the active modal
-async function closeModal(page: Page) {
-  await page.getByTestId('modal-close').click()
-}
-
-// Ensure a match is expanded (not compact) inside the open modal.
-async function ensureExpanded(page: Page, matchId: string) {
-  const compact = page.getByTestId(`compact-${matchId}`)
-  if (await compact.isVisible()) {
-    await compact.click()
-    await page.waitForTimeout(50)
-  }
-}
-
-// Fill scores for a group inside the open modal.
-// Keys are match IDs, values are [home, away].
-// Matches start collapsed in accordion mode; ensureExpanded opens them before clicking steppers.
-async function fillGroupScores(page: Page, scores: Record<string, [number, number]>) {
-  for (const [matchId, [home, away]] of Object.entries(scores)) {
-    for (let i = 0; i < home; i++) {
-      await ensureExpanded(page, matchId)
-      await page.getByTestId(`home-plus-${matchId}`).click()
-    }
-    for (let i = 0; i < away; i++) {
-      await ensureExpanded(page, matchId)
-      await page.getByTestId(`away-plus-${matchId}`).click()
-    }
-    await page.waitForTimeout(50)
-  }
-}
+import { test, expect } from '@playwright/test'
+import { openGroupModal, closeModal, ensureExpanded, fillGroupScores } from './helpers'
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
