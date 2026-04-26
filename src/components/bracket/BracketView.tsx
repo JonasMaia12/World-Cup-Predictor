@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import type { Bracket, BracketMatch } from '@/engine/types'
 import { TEAMS } from '@/data/wc2026'
+import { useStore } from '@/store'
 import { BracketMinimap } from './BracketMinimap'
 import { ChampionCard } from './ChampionCard'
 import { cn } from '@/lib/utils'
 
 type Round = 'roundOf32' | 'roundOf16' | 'quarterFinals' | 'semiFinals' | 'final'
 
-function TeamSlot({ code }: { code: string | null }) {
+function TeamSlot({ code, isWinner, score }: { code: string | null; isWinner?: boolean; score?: number }) {
   const team = TEAMS.find((t) => t.code === code)
   return (
     <div
@@ -19,7 +20,12 @@ function TeamSlot({ code }: { code: string | null }) {
       {code ? (
         <>
           <span>{team?.flag}</span>
-          <span>{code}</span>
+          <span className={cn('flex-1', isWinner && 'font-bold text-wcp-primary')}>{code}</span>
+          {score !== undefined && (
+            <span className={cn('tabular-nums ml-auto text-xs font-bold', isWinner ? 'text-wcp-primary' : 'text-wcp-muted')}>
+              {score}
+            </span>
+          )}
         </>
       ) : (
         <span className="opacity-40">?</span>
@@ -35,6 +41,11 @@ function MatchCard({
   match: BracketMatch
   onClick?: (match: BracketMatch) => void
 }) {
+  const scores = useStore((s) => s.scores)
+  const score = scores[match.id]
+  const homeWins = score ? score.home > score.away : false
+  const awayWins = score ? score.away > score.home : false
+
   return (
     <div
       data-testid={`bracket-match-${match.id}`}
@@ -45,10 +56,54 @@ function MatchCard({
       style={{ minWidth: 'clamp(110px, 11vw, 150px)' }}
       onClick={onClick ? () => onClick(match) : undefined}
     >
-      <TeamSlot code={match.home} />
+      <TeamSlot code={match.home} isWinner={homeWins} score={score?.home} />
       <div className="h-px bg-wcp-border mx-2" />
-      <TeamSlot code={match.away} />
+      <TeamSlot code={match.away} isWinner={awayWins} score={score?.away} />
     </div>
+  )
+}
+
+// Conecta pares de matches da coluna atual à próxima rodada via SVG.
+// mirror=true espelha horizontalmente para o lado direito do bracket.
+function RoundConnector({ count, mirror = false }: { count: number; mirror?: boolean }) {
+  const pairs = Math.floor(count / 2)
+  const matchH = 64
+  const gap    = 6
+  const totalH = count * matchH + (count - 1) * gap
+
+  // Caso especial: SF → Final (count=1, sem branching — só linha horizontal)
+  if (pairs === 0) {
+    const cy = matchH / 2
+    return (
+      <svg width="24" height={matchH} viewBox={`0 0 24 ${matchH}`} fill="none"
+           style={mirror ? { transform: 'scaleX(-1)' } : undefined}>
+        <line x1="0" y1={cy} x2="24" y2={cy} stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg width="24" height={totalH} viewBox={`0 0 24 ${totalH}`} fill="none"
+         style={mirror ? { transform: 'scaleX(-1)' } : undefined}>
+      {Array.from({ length: pairs }).map((_, i) => {
+        const y1   = i * 2 * (matchH + gap) + matchH / 2
+        const y2   = (i * 2 + 1) * (matchH + gap) + matchH / 2
+        const yMid = (y1 + y2) / 2
+        return (
+          <g key={i}>
+            {/* braço superior: (0,y1) → (12,yMid) */}
+            <path d={`M0 ${y1} Q12 ${y1} 12 ${yMid}`}
+                  stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" fill="none" />
+            {/* braço inferior: (0,y2) → (12,yMid) — espelho do superior */}
+            <path d={`M0 ${y2} Q12 ${y2} 12 ${yMid}`}
+                  stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" fill="none" />
+            {/* linha horizontal até à próxima coluna */}
+            <line x1="12" y1={yMid} x2="24" y2={yMid}
+                  stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" />
+          </g>
+        )
+      })}
+    </svg>
   )
 }
 
@@ -91,11 +146,15 @@ function DesktopBracket({
 
   return (
     <div className="overflow-x-auto py-4 px-4">
-      <div className="flex items-center justify-center min-w-fit" style={{ gap: 'clamp(12px, 2vw, 32px)' }}>
+      <div className="flex items-center justify-center min-w-fit">
         <RoundColumn title="Rodada de 32" matches={leftR32} onMatchClick={onMatchClick} />
+        <RoundConnector count={8} />
         <RoundColumn title="Oitavas" matches={leftR16} onMatchClick={onMatchClick} />
+        <RoundConnector count={4} />
         <RoundColumn title="Quartos" matches={leftQF} onMatchClick={onMatchClick} />
+        <RoundConnector count={2} />
         <RoundColumn title="Semis" matches={leftSF} onMatchClick={onMatchClick} />
+        <RoundConnector count={1} />
 
         <div className="flex flex-col items-center gap-2 px-3">
           <span className="text-[11px] text-wcp-primary tracking-wide uppercase font-display font-bold">Final</span>
@@ -104,9 +163,13 @@ function DesktopBracket({
           </div>
         </div>
 
+        <RoundConnector count={1} mirror />
         <RoundColumn title="Semis" matches={rightSF} onMatchClick={onMatchClick} />
+        <RoundConnector count={2} mirror />
         <RoundColumn title="Quartos" matches={rightQF} onMatchClick={onMatchClick} />
+        <RoundConnector count={4} mirror />
         <RoundColumn title="Oitavas" matches={rightR16} onMatchClick={onMatchClick} />
+        <RoundConnector count={8} mirror />
         <RoundColumn title="Rodada de 32" matches={rightR32} onMatchClick={onMatchClick} />
       </div>
     </div>
