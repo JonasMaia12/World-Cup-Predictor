@@ -122,3 +122,28 @@ export function cascadeClearKnockout(
   }
   return result
 }
+
+// Limpa todos os rounds downstream de um match knockout (não o match em si).
+// Usado quando o resultado de um match knockout é alterado.
+export function cascadeClearKnockoutFromMatch(
+  matchId: string,
+  scores: ScoreMap,
+): ScoreMap {
+  const downstream = new Set<string>()
+  const queue = [...(KNOCKOUT_CHILDREN[matchId] ?? [])]
+  while (queue.length > 0) {
+    const id = queue.shift()!
+    if (!downstream.has(id)) {
+      downstream.add(id)
+      for (const child of KNOCKOUT_CHILDREN[id] ?? []) {
+        queue.push(child)
+      }
+    }
+  }
+  if (downstream.size === 0) return scores
+  const result = { ...scores }
+  for (const id of downstream) {
+    delete result[id]
+  }
+  return result
+}

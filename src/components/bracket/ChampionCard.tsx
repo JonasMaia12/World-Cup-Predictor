@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Bracket } from '@/engine/types'
 import { TEAMS } from '@/data/wc2026'
@@ -75,6 +75,7 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
   const { share, copied } = useShareLink()
   const [open, setOpen] = useState(true)
   const [visible, setVisible] = useState(false)
+  const closeRef = useRef<HTMLButtonElement>(null)
 
   // Auto-open and trigger entry animation when champion changes
   useEffect(() => {
@@ -83,6 +84,11 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
     const t = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(t)
   }, [champion])
+
+  // Focus close button when modal opens (a11y)
+  useEffect(() => {
+    if (open) closeRef.current?.focus()
+  }, [open])
 
   // Close on Escape + lock body scroll while open
   useEffect(() => {
@@ -117,6 +123,9 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Campeão do Mundo 2026"
         className={`relative z-10 w-full sm:max-w-md mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto overflow-x-hidden
           rounded-t-2xl sm:rounded-2xl border-2 border-wcp-primary
           bg-gradient-to-b from-wcp-surface to-wcp-surface-subtle shadow-xl
@@ -131,6 +140,7 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
             Campeão do Mundo 2026
           </span>
           <button
+            ref={closeRef}
             data-testid="champion-modal-close"
             onClick={() => setOpen(false)}
             className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center
