@@ -54,6 +54,7 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
         <table className="w-full">
           <thead>
             <tr className="text-wcp-muted text-[9px] uppercase tracking-wide">
+              <th className="p-0 w-0.5" />
               <th className="text-left py-1 pr-2">#</th>
               <th className="text-left py-1">Seleção</th>
               <th className="text-center py-1 px-1">J</th>
@@ -66,30 +67,44 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
               const team = TEAMS.find((t) => t.code === s.teamCode)
               const qualifies = idx < 2
               return (
-                <tr
-                  key={s.teamCode}
-                  className={cn(
-                    'border-t border-wcp-border text-xs',
-                    qualifies ? 'text-wcp-text' : 'text-wcp-muted',
+                <>
+                  <tr
+                    key={s.teamCode}
+                    className={cn(
+                      'border-t border-wcp-border text-xs relative',
+                      qualifies ? 'text-wcp-text' : 'text-wcp-muted',
+                    )}
+                  >
+                    <td className="p-0 w-0.5">
+                      {qualifies && (
+                        <div className="h-full min-h-[28px] w-0.5 bg-wcp-primary rounded-full" />
+                      )}
+                    </td>
+                    <td className="py-1.5 pr-2">
+                      <span className={cn('font-bold', qualifies && 'text-wcp-primary')}>
+                        {idx + 1}
+                      </span>
+                    </td>
+                    <td className="py-1.5">
+                      <span className="mr-1">{team?.flag}</span>
+                      <span className="font-semibold">{s.teamCode}</span>
+                    </td>
+                    <td className="py-1.5 text-center px-1 tabular-nums">{s.played}</td>
+                    <td className="py-1.5 text-center px-1 tabular-nums">
+                      {s.goalDiff > 0 ? `+${s.goalDiff}` : s.goalDiff}
+                    </td>
+                    <td className="py-1.5 text-center px-1 font-bold text-wcp-primary tabular-nums">
+                      {s.points}
+                    </td>
+                  </tr>
+                  {idx === 1 && (
+                    <tr key={`sep-${s.teamCode}`}>
+                      <td colSpan={6}>
+                        <div className="h-px bg-wcp-primary/20 my-0.5" />
+                      </td>
+                    </tr>
                   )}
-                >
-                  <td className="py-1.5 pr-2">
-                    <span className={cn('font-bold', qualifies && 'text-wcp-primary')}>
-                      {idx + 1}
-                    </span>
-                  </td>
-                  <td className="py-1.5">
-                    <span className="mr-1">{team?.flag}</span>
-                    <span className="font-semibold">{s.teamCode}</span>
-                  </td>
-                  <td className="py-1.5 text-center px-1 tabular-nums">{s.played}</td>
-                  <td className="py-1.5 text-center px-1 tabular-nums">
-                    {s.goalDiff > 0 ? `+${s.goalDiff}` : s.goalDiff}
-                  </td>
-                  <td className="py-1.5 text-center px-1 font-bold text-wcp-primary tabular-nums">
-                    {s.points}
-                  </td>
-                </tr>
+                </>
               )
             })}
           </tbody>
