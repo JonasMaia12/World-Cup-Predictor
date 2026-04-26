@@ -85,8 +85,8 @@ describe('MatchRow compact mode', () => {
     expect(screen.queryByTestId('away-plus-A1')).not.toBeInTheDocument()
   })
 
-  it('renders check mark in compact mode', () => {
-    render(
+  it('renders check mark SVG in compact mode when score is set', () => {
+    const { container } = render(
       <MatchRow
         match={match}
         homeScore={2}
@@ -95,7 +95,11 @@ describe('MatchRow compact mode', () => {
         compact
       />
     )
-    expect(screen.getByText('✓')).toBeInTheDocument()
+    // check SVG (polyline "20 6 9 17 4 12") is present; chevron SVG absent
+    const svgs = container.querySelectorAll('svg')
+    const points = Array.from(svgs).map((s) => s.querySelector('polyline')?.getAttribute('points'))
+    expect(points).toContain('20 6 9 17 4 12')
+    expect(points).not.toContain('9 18 15 12 9 6')
   })
 
   it('calls onClick when compact row is clicked', () => {
@@ -125,8 +129,11 @@ describe('MatchRow compact mode', () => {
       />
     )
     expect(screen.getByText('– × –')).toBeInTheDocument()
-    expect(screen.getByText('›')).toBeInTheDocument()
-    expect(screen.queryByText('✓')).not.toBeInTheDocument()
+    // chevron SVG (polyline "9 18 15 12 9 6") present; check SVG absent
+    const svgs = document.querySelectorAll('svg')
+    const points = Array.from(svgs).map((s) => s.querySelector('polyline')?.getAttribute('points'))
+    expect(points).toContain('9 18 15 12 9 6')
+    expect(points).not.toContain('20 6 9 17 4 12')
   })
 })
 

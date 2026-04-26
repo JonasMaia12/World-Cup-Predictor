@@ -68,7 +68,6 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, onClearSc
   if (compact) {
     const hasSco = homeScore !== undefined
     const scoreLabel = hasSco ? `${home} × ${away}` : '– × –'
-    const indicator = hasSco ? '✓' : '›'
     const showClear = hasSco && onClearScore !== undefined
 
     return (
@@ -87,9 +86,17 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, onClearSc
             <span className="text-xs font-semibold text-wcp-text">{match.awayTeam}</span>
             <span className="text-lg leading-none">{awayTeam?.flag}</span>
           </div>
-          <span className={cn('text-xs font-bold ml-2', hasSco ? 'text-wcp-primary' : 'text-wcp-muted', showClear && 'invisible')}>
-            {indicator}
-          </span>
+          {!showClear && (
+            hasSco ? (
+              <svg className="ml-2 shrink-0 text-wcp-primary" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            ) : (
+              <svg className="ml-2 shrink-0 text-wcp-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            )
+          )}
         </button>
         {showClear && (
           <button
