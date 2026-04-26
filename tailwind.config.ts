@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['"Barlow Condensed"', 'sans-serif'],
+        body:    ['"Inter"', 'sans-serif'],
+      },
       colors: {
         wcp: {
           bg:             '#f0f4f1',

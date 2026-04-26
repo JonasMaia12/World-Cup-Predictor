@@ -7,7 +7,7 @@
     @apply border-wcp-border;
   }
   body {
-    @apply bg-wcp-bg text-wcp-text;
+    @apply bg-wcp-bg text-wcp-text font-body;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   /* hide number input spinners */

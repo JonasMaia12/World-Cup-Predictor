@@ -63,7 +63,7 @@ function RoundColumn({
 }) {
   return (
     <div className="flex flex-col gap-1.5 items-center">
-      <span className="text-[10px] text-wcp-muted tracking-[2px] uppercase mb-1">{title}</span>
+      <span className="text-[11px] text-wcp-muted tracking-wide uppercase font-display font-bold mb-1">{title}</span>
       <div className="flex flex-col gap-1.5">
         {matches.map((m) => (
           <MatchCard key={m.id} match={m} onClick={onMatchClick} />
@@ -98,7 +98,7 @@ function DesktopBracket({
         <RoundColumn title="Semis" matches={leftSF} onMatchClick={onMatchClick} />
 
         <div className="flex flex-col items-center gap-2 px-3">
-          <span className="text-[9px] text-wcp-primary tracking-[3px] uppercase font-bold">Final</span>
+          <span className="text-[11px] text-wcp-primary tracking-wide uppercase font-display font-bold">Final</span>
           <div className="border-2 border-wcp-primary rounded-xl overflow-hidden">
             <MatchCard match={bracket.final} onClick={onMatchClick} />
           </div>
@@ -150,7 +150,7 @@ function MobileBracket({
         data-testid={`round-${activeRound}`}
         className="px-4 py-4 flex flex-col gap-3"
       >
-        <span className="text-[9px] text-wcp-primary tracking-[3px] uppercase font-bold">
+        <span className="text-[11px] text-wcp-primary tracking-wide uppercase font-display font-bold">
           {ROUND_LABELS[activeRound]}
         </span>
         {matches.map((m) => (

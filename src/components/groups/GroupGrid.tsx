@@ -68,7 +68,7 @@ export function GroupGrid() {
       {/* Bracket section */}
       <div className="rounded-xl border border-wcp-border">
         <div className="bg-wcp-surface-subtle px-4 py-3 border-b border-wcp-border rounded-t-xl">
-          <span className="text-[10px] tracking-[3px] uppercase font-semibold text-wcp-primary">
+          <span className="text-[11px] tracking-wide uppercase font-display font-bold text-wcp-primary">
             FASE ELIMINATÓRIA
           </span>
         </div>
