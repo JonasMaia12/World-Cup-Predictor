@@ -66,7 +66,15 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
               onClick={() => setShowPositionPicker((v) => !v)}
               className="text-xs text-wcp-primary font-semibold underline underline-offset-2 mt-0.5"
             >
-              🏆 Definir classificação
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                <path d="M4 22h16"/>
+                <path d="M10 14.66V17a2 2 0 0 1-2 2H7"/>
+                <path d="M14 14.66V17a2 2 0 0 1 2 2h1"/>
+                <path d="M6 2v7a6 6 0 0 0 12 0V2"/>
+              </svg>
+              Definir classificação
             </button>
           </div>
           <button
@@ -75,7 +83,10 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
             className="w-8 h-8 rounded-full bg-wcp-surface-subtle hover:bg-wcp-primary-faint flex items-center justify-center text-wcp-muted transition-colors"
             aria-label="Fechar"
           >
-            ×
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
           </button>
         </div>
 
