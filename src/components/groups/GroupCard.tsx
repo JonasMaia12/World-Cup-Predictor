@@ -75,7 +75,7 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
                       qualifies ? 'text-wcp-text' : 'text-wcp-muted',
                     )}
                   >
-                    <td className="p-0 w-0.5">
+                    <td className="p-0 pr-2 w-0.5">
                       {qualifies && (
                         <div className="h-full min-h-[28px] w-0.5 bg-wcp-primary rounded-full" />
                       )}
