@@ -148,30 +148,30 @@ function DesktopBracket({
 
   return (
     <div className="overflow-x-auto py-4 px-4">
-      <div className="flex items-center justify-center min-w-fit">
+      <div className="flex items-start justify-center min-w-fit">
         <RoundColumn title="Rodada de 32" matches={leftR32} onMatchClick={onMatchClick} />
-        <RoundConnector count={8} />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={8} /></div>
         <RoundColumn title="Oitavas" matches={leftR16} onMatchClick={onMatchClick} />
-        <RoundConnector count={4} />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={4} /></div>
         <RoundColumn title="Quartos" matches={leftQF} onMatchClick={onMatchClick} />
-        <RoundConnector count={2} />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={2} /></div>
         <RoundColumn title="Semis" matches={leftSF} onMatchClick={onMatchClick} />
-        <RoundConnector count={1} />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={1} /></div>
 
-        <div className="flex flex-col items-center gap-2 px-3">
+        <div className="flex flex-col items-center gap-2 px-3 pt-5">
           <span className="text-[11px] text-wcp-primary tracking-wide uppercase font-display font-bold">Final</span>
           <div className="border-2 border-wcp-primary rounded-xl overflow-hidden">
             <MatchCard match={bracket.final} onClick={onMatchClick} />
           </div>
         </div>
 
-        <RoundConnector count={1} mirror />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={1} mirror /></div>
         <RoundColumn title="Semis" matches={rightSF} onMatchClick={onMatchClick} />
-        <RoundConnector count={2} mirror />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={2} mirror /></div>
         <RoundColumn title="Quartos" matches={rightQF} onMatchClick={onMatchClick} />
-        <RoundConnector count={4} mirror />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={4} mirror /></div>
         <RoundColumn title="Oitavas" matches={rightR16} onMatchClick={onMatchClick} />
-        <RoundConnector count={8} mirror />
+        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={8} mirror /></div>
         <RoundColumn title="Rodada de 32" matches={rightR32} onMatchClick={onMatchClick} />
       </div>
     </div>
