@@ -108,6 +108,7 @@ colors: {
 - ✅ **Fase 12a** — ChampionCard → modal (portal, scroll lock, Escape/backdrop), header icons mobile — 148 unit
 - ✅ **Fase 12b** — Tech debt: cascade knockout→knockout (cascadeClearKnockoutFromMatch), ARIA modal campeão — 153 unit
 - ✅ **Fase 12c** — UI polish: RoundConnector SVG entre colunas do bracket, font sizes mínimos (≥10px), dark mode via CSS variables (`:root`/`.dark`), FOUC fix em index.html — 153 unit + 20 E2E
+- ✅ **Fase 12d** — Micro-polish: connector alignment (`items-start` + `h-5` spacer), todos emoji/unicode → SVG inline (MatchModal, MatchRow), React.Fragment key em GroupCard, Buy Me a Coffee widget — 153 unit + 20 E2E
 
 ---
 
