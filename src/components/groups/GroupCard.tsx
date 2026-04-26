@@ -97,7 +97,7 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
                     </td>
                   </tr>
                   {idx === 1 && (
-                    <tr key={`sep-${s.teamCode}`}>
+                    <tr>
                       <td colSpan={6}>
                         <div className="h-px bg-wcp-primary/20 my-0.5" />
                       </td>

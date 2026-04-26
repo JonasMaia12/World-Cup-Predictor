@@ -150,7 +150,7 @@ function DesktopBracket({
     <div className="overflow-x-auto py-4 px-4">
       <div className="flex items-start justify-center min-w-fit">
         <RoundColumn title="Rodada de 32" matches={leftR32} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={8} /></div>
+        <div className="flex flex-col"><div className="h-5" />{/* h-5 = label height (text-[11px] + mb-1) in RoundColumn */}<RoundConnector count={8} /></div>
         <RoundColumn title="Oitavas" matches={leftR16} onMatchClick={onMatchClick} />
         <div className="flex flex-col"><div className="h-5" /><RoundConnector count={4} /></div>
         <RoundColumn title="Quartos" matches={leftQF} onMatchClick={onMatchClick} />

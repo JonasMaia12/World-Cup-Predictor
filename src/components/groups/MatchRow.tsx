@@ -106,9 +106,12 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, onClearSc
               onClearScore!(match.id)
             }}
             aria-label="Limpar placar"
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center text-wcp-muted hover:text-wcp-text hover:bg-wcp-surface-subtle transition-colors text-xs font-bold"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center text-wcp-muted hover:text-wcp-text hover:bg-wcp-surface-subtle transition-colors"
           >
-            ✕
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
           </button>
         )}
       </div>
