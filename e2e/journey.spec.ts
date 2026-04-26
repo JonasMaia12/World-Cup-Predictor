@@ -119,6 +119,10 @@ test('@slow Jornada completa: grupos → bracket → campeão → share', async 
   // Verificar card de campeão
   await expect(page.getByTestId('champion-card')).toBeVisible()
 
+  // Fechar o modal do campeão (abre automaticamente e bloqueia o header)
+  await page.getByTestId('champion-modal-close').click()
+  await expect(page.getByTestId('champion-modal-close')).not.toBeVisible()
+
   // FASE 3 — Share
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.getByTestId('share-button').click()
