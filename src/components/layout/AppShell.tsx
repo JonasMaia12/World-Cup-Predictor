@@ -83,6 +83,7 @@ function ShareButton() {
     <button
       onClick={share}
       data-testid="share-button"
+      title="Compartilhar previsão"
       className="bg-wcp-primary text-white text-xs font-semibold rounded-full px-3 py-1.5 sm:px-4 transition-opacity hover:opacity-90 active:opacity-75"
     >
       <span className="sm:hidden">{copied ? '✓' : '↗'}</span>

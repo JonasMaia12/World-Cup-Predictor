@@ -84,12 +84,16 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
     return () => cancelAnimationFrame(t)
   }, [champion])
 
-  // Close on Escape
+  // Close on Escape + lock body scroll while open
   useEffect(() => {
     if (!open) return
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
     document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+    }
   }, [open])
 
   const team = TEAMS.find((t) => t.code === champion)
@@ -113,8 +117,8 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
       <div
-        className={`relative z-10 w-full sm:max-w-md mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto
-          rounded-t-2xl sm:rounded-2xl overflow-hidden border-2 border-wcp-primary
+        className={`relative z-10 w-full sm:max-w-md mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto overflow-x-hidden
+          rounded-t-2xl sm:rounded-2xl border-2 border-wcp-primary
           bg-gradient-to-b from-wcp-surface to-wcp-surface-subtle shadow-xl
           transition-opacity duration-100
           ${visible ? 'animate-championEntry' : 'opacity-0'}`}

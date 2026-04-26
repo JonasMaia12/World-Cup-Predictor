@@ -39,7 +39,7 @@ describe('BracketView', () => {
     expect(screen.getAllByTestId(/bracket-match/).length).toBeGreaterThan(0)
   })
 
-  it('shows champion card when champion prop is provided', () => {
+  it('shows champion card trigger when champion prop is provided', () => {
     render(<BracketView bracket={makeEmptyBracket()} champion="ARG" />)
     expect(screen.getByTestId('champion-card')).toBeInTheDocument()
   })
@@ -47,6 +47,24 @@ describe('BracketView', () => {
   it('does not show champion card when champion is null', () => {
     render(<BracketView bracket={makeEmptyBracket()} champion={null} />)
     expect(screen.queryByTestId('champion-card')).toBeNull()
+  })
+
+  it('champion modal opens automatically and closes via close button', () => {
+    render(<BracketView bracket={makeEmptyBracket()} champion="ARG" />)
+    // modal should be open by default
+    expect(screen.getByTestId('champion-modal-close')).toBeInTheDocument()
+    // close it
+    fireEvent.click(screen.getByTestId('champion-modal-close'))
+    expect(screen.queryByTestId('champion-modal-close')).toBeNull()
+  })
+
+  it('champion trigger pill re-opens the modal after closing', () => {
+    render(<BracketView bracket={makeEmptyBracket()} champion="ARG" />)
+    fireEvent.click(screen.getByTestId('champion-modal-close'))
+    expect(screen.queryByTestId('champion-modal-close')).toBeNull()
+    // re-open via trigger pill
+    fireEvent.click(screen.getByTestId('champion-card'))
+    expect(screen.getByTestId('champion-modal-close')).toBeInTheDocument()
   })
 
   it('calls onMatchClick when a bracket match card is clicked', () => {
