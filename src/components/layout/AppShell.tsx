@@ -54,9 +54,10 @@ function ResetAllButton() {
       onClick={handleClick}
       data-testid="reset-all-btn"
       title="Limpar todos os resultados"
-      className="border border-red-300 text-red-400 text-xs font-semibold rounded-full px-4 py-1.5 transition-opacity hover:opacity-75 active:opacity-50"
+      className="border border-red-300 text-red-400 text-xs font-semibold rounded-full px-3 py-1.5 sm:px-4 transition-opacity hover:opacity-75 active:opacity-50"
     >
-      Limpar tudo
+      <span className="sm:hidden">🗑</span>
+      <span className="hidden sm:inline">Limpar tudo</span>
     </button>
   )
 }
@@ -68,9 +69,10 @@ function SimulateButton() {
       onClick={simulateMissing}
       data-testid="simulate-button"
       title="Preenche apenas os jogos em branco com simulação automática"
-      className="border border-wcp-primary text-wcp-primary text-xs font-semibold rounded-full px-4 py-1.5 transition-opacity hover:opacity-75 active:opacity-50"
+      className="border border-wcp-primary text-wcp-primary text-xs font-semibold rounded-full px-3 py-1.5 sm:px-4 transition-opacity hover:opacity-75 active:opacity-50"
     >
-      🎲 Simular
+      <span className="sm:hidden">🎲</span>
+      <span className="hidden sm:inline">🎲 Simular</span>
     </button>
   )
 }
@@ -81,9 +83,10 @@ function ShareButton() {
     <button
       onClick={share}
       data-testid="share-button"
-      className="bg-wcp-primary text-white text-xs font-semibold rounded-full px-4 py-1.5 transition-opacity hover:opacity-90 active:opacity-75"
+      className="bg-wcp-primary text-white text-xs font-semibold rounded-full px-3 py-1.5 sm:px-4 transition-opacity hover:opacity-90 active:opacity-75"
     >
-      {copied ? 'Link copiado!' : '↗ Compartilhar'}
+      <span className="sm:hidden">{copied ? '✓' : '↗'}</span>
+      <span className="hidden sm:inline">{copied ? 'Link copiado!' : '↗ Compartilhar'}</span>
     </button>
   )
 }
