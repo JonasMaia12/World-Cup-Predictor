@@ -32,14 +32,14 @@ function Stepper({
       <button
         data-testid={testIdPlus}
         onClick={onIncrement}
-        className="w-7 h-7 rounded-full bg-wcp-primary-faint border border-wcp-primary-light text-wcp-primary font-bold text-base flex items-center justify-center leading-none"
+        className="w-11 h-11 rounded-full bg-wcp-primary-faint border border-wcp-primary-light text-wcp-primary font-bold text-base flex items-center justify-center leading-none"
         aria-label="incrementar"
       >
         +
       </button>
       <span
         data-testid={testIdValue}
-        className="text-xl font-bold text-wcp-text min-w-[28px] text-center tabular-nums"
+        className="text-4xl font-black font-display text-wcp-text min-w-[44px] text-center tabular-nums"
       >
         {value}
       </span>
@@ -48,7 +48,7 @@ function Stepper({
         onClick={onDecrement}
         disabled={value === 0}
         className={cn(
-          'w-7 h-7 rounded-full bg-wcp-primary-faint border border-wcp-primary-light text-wcp-primary font-bold text-base flex items-center justify-center leading-none',
+          'w-11 h-11 rounded-full bg-wcp-primary-faint border border-wcp-primary-light text-wcp-primary font-bold text-base flex items-center justify-center leading-none',
           value === 0 && 'opacity-30 cursor-not-allowed',
         )}
         aria-label="decrementar"
@@ -109,10 +109,10 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, onClearSc
   }
 
   return (
-    <div className="flex items-center justify-between bg-wcp-surface border border-wcp-border rounded-xl px-4 py-3 gap-2">
+    <div className="flex items-center justify-between bg-wcp-surface border border-wcp-border rounded-xl px-4 py-5 gap-2">
       <div className="flex flex-col items-center gap-1 flex-1">
-        <span className="text-3xl leading-none">{homeTeam?.flag}</span>
-        <span className="text-[10px] font-semibold text-wcp-text tracking-wide">{match.homeTeam}</span>
+        <span className="text-5xl leading-none">{homeTeam?.flag}</span>
+        <span className="text-sm font-bold text-wcp-text tracking-wide">{match.homeTeam}</span>
       </div>
 
       <div className="flex items-center gap-3">
@@ -136,8 +136,8 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, onClearSc
       </div>
 
       <div className="flex flex-col items-center gap-1 flex-1">
-        <span className="text-3xl leading-none">{awayTeam?.flag}</span>
-        <span className="text-[10px] font-semibold text-wcp-text tracking-wide">{match.awayTeam}</span>
+        <span className="text-5xl leading-none">{awayTeam?.flag}</span>
+        <span className="text-sm font-bold text-wcp-text tracking-wide">{match.awayTeam}</span>
       </div>
     </div>
   )
