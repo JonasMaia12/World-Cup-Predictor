@@ -1,6 +1,6 @@
 // src/engine/cascade.test.ts
 import { describe, it, expect } from 'vitest'
-import { cascadeClearKnockout } from './cascade'
+import { cascadeClearKnockout, cascadeClearKnockoutFromMatch } from './cascade'
 import { computeAllStandings } from './classifier'
 
 // Grupo A com MEX 1º inequívoco
@@ -178,5 +178,53 @@ describe('cascadeClearKnockout — ScoreMap vazio', () => {
     const newStandings = computeAllStandings({ A1: { home: 0, away: 3 } })
     const result = cascadeClearKnockout('A', oldStandings, newStandings, {}, [])
     expect(result).toEqual({})
+  })
+})
+
+describe('cascadeClearKnockoutFromMatch', () => {
+  it('retorna scores inalterado se match não tem filhos (final)', () => {
+    const scores = { 'final': { home: 1, away: 0 }, 'r16-1': { home: 2, away: 1 } }
+    const result = cascadeClearKnockoutFromMatch('final', scores)
+    expect(result).toEqual(scores)
+  })
+
+  it('limpa r16-1 quando r32-1 muda (filho directo)', () => {
+    const scores = {
+      'r32-1': { home: 2, away: 0 },
+      'r16-1': { home: 1, away: 0 },
+      'qf-1':  { home: 1, away: 0 },
+    }
+    const result = cascadeClearKnockoutFromMatch('r32-1', scores)
+    expect(result['r32-1']).toBeDefined()
+    expect(result['r16-1']).toBeUndefined()
+    expect(result['qf-1']).toBeUndefined()
+  })
+
+  it('limpa toda a cadeia r16-1→qf-1→sf-1→final quando r16-1 muda', () => {
+    const scores = {
+      'r16-1': { home: 2, away: 1 },
+      'qf-1':  { home: 1, away: 0 },
+      'sf-1':  { home: 3, away: 2 },
+      'final': { home: 1, away: 0 },
+      'r16-2': { home: 1, away: 0 },
+    }
+    const result = cascadeClearKnockoutFromMatch('r16-1', scores)
+    expect(result['r16-1']).toBeDefined()
+    expect(result['qf-1']).toBeUndefined()
+    expect(result['sf-1']).toBeUndefined()
+    expect(result['final']).toBeUndefined()
+    expect(result['r16-2']).toBeDefined()
+  })
+
+  it('não toca em scores de matches não relacionados', () => {
+    const scores = {
+      'r32-3': { home: 1, away: 0 },
+      'r16-2': { home: 1, away: 0 },
+      'r32-1': { home: 2, away: 1 },
+      'r16-1': { home: 1, away: 0 },
+    }
+    const result = cascadeClearKnockoutFromMatch('r32-1', scores)
+    expect(result['r32-3']).toBeDefined()
+    expect(result['r16-2']).toBeDefined()
   })
 })

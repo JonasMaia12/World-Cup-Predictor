@@ -91,6 +91,14 @@ describe('TournamentSlice — simulateKnockoutWinner', () => {
     expect(score).toBeDefined()
     expect(score.away).toBeGreaterThan(score.home)
   })
+
+  it('cascata em simulateKnockoutWinner — limpa downstream', () => {
+    const store = makeStore()
+    store.getState().setScores({ 'r32-1': { home: 2, away: 1 }, 'r16-1': { home: 1, away: 0 } })
+    store.getState().simulateKnockoutWinner('r32-1', 'ARG', 'BRA', 'BRA')
+    expect(store.getState().scores['r32-1']).toBeDefined()
+    expect(store.getState().scores['r16-1']).toBeUndefined()
+  })
 })
 
 describe('TournamentSlice — pickGroupOrder', () => {
@@ -220,12 +228,13 @@ describe('TournamentSlice — cascade knockout em setScore', () => {
     expect(store.getState().scores['r32-1']).toEqual({ home: 2, away: 1 })
   })
 
-  it('não cascata em setScore de um jogo knockout', () => {
+  it('cascata em setScore de um jogo knockout — limpa downstream', () => {
     const store = makeStore()
     store.getState().setScores({ 'r32-1': { home: 2, away: 1 }, 'r16-1': { home: 1, away: 0 } })
-    // setScore de r32-1 (knockout) não deve limpar r16-1
+    // setScore de r32-1 (knockout) deve limpar r16-1 downstream
     store.getState().setScore('r32-1', 3, 1)
-    expect(store.getState().scores['r16-1']).toEqual({ home: 1, away: 0 })
+    expect(store.getState().scores['r32-1']).toEqual({ home: 3, away: 1 })
+    expect(store.getState().scores['r16-1']).toBeUndefined()
   })
 })
 

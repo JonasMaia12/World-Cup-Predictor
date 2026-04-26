@@ -4,7 +4,7 @@ import { simulateMissingMatches, simulateKnockoutMatch } from '@/engine/simulato
 import { generateGroupScoresForOrder } from '@/engine/group-position'
 import { FIXTURES, TEAMS } from '@/data/wc2026'
 import { computeAllStandings } from '@/engine/classifier'
-import { cascadeClearKnockout } from '@/engine/cascade'
+import { cascadeClearKnockout, cascadeClearKnockoutFromMatch } from '@/engine/cascade'
 
 export interface TournamentSlice {
   scores: ScoreMap
@@ -38,7 +38,8 @@ export const createTournamentSlice: StateCreator<TournamentSlice> = (set) => ({
     set((state) => {
       const groupId = getGroupId(matchId)
       if (!groupId) {
-        return { scores: { ...state.scores, [matchId]: { home, away } } }
+        const newScores = { ...state.scores, [matchId]: { home, away } }
+        return { scores: cascadeClearKnockoutFromMatch(matchId, newScores) }
       }
       const oldAllStandings = computeAllStandings(state.scores)
       const newScores = { ...state.scores, [matchId]: { home, away } }
@@ -72,12 +73,13 @@ export const createTournamentSlice: StateCreator<TournamentSlice> = (set) => ({
     })),
 
   simulateKnockoutWinner: (matchId, homeCode, awayCode, winnerCode) =>
-    set((state) => ({
-      scores: {
+    set((state) => {
+      const newScores = {
         ...state.scores,
         [matchId]: simulateKnockoutMatch(homeCode, awayCode, TEAMS, winnerCode),
-      },
-    })),
+      }
+      return { scores: cascadeClearKnockoutFromMatch(matchId, newScores) }
+    }),
 
   pickGroupOrder: (groupId, orderedTeams) =>
     set((state) => {

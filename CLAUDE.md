@@ -105,6 +105,7 @@ colors: {
 - ✅ **Fase 9** — Simulador automático (Poisson + ranking FIFA), reset por partida, info de jogo — 79 testes
 - ✅ **Fase 10** — Bracket interactivo: KnockoutMatchModal, cascata r32→final, ChampionCard, GroupPositionPicker, "Limpar tudo" — 129 testes
 - ✅ **Fase 11** — Cascade knockout + E2E completo + ChampionCard animado com trajetória — 146 unit + 20 E2E
+- ✅ **Fase 12a** — ChampionCard → modal (portal, scroll lock, Escape/backdrop), header icons mobile — 148 unit
 
 ---
 
@@ -125,6 +126,7 @@ Comparar o bracket do utilizador com os resultados reais e dar pontuação:
 
 ### Tech Debt documentado
 - **Cascade knockout→knockout**: mudar o vencedor de `r32-1` depois de `r16-1`, `qf-1`, sf e final já preenchidos não limpa os rounds downstream. A infraestrutura (`cascadeClearKnockout`) já existe — falta um `KNOCKOUT_CHILDREN` map em `simulateKnockoutWinner` e no branch knockout de `setScore`.
+- **ARIA no modal do campeão**: `ChampionCard.tsx` — falta `role="dialog"` + `aria-modal="true"` no div do modal e gestão de foco na abertura. Identificado no review do PR #13.
 
 ---
 
