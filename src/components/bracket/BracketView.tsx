@@ -67,6 +67,8 @@ function MatchCard({
 // mirror=true espelha horizontalmente para o lado direito do bracket.
 function RoundConnector({ count, mirror = false }: { count: number; mirror?: boolean }) {
   const pairs = Math.floor(count / 2)
+  // matchH must match the rendered MatchCard height (2 TeamSlot rows ~28px + 1px divider)
+  // gap must match gap-1.5 (6px) used in RoundColumn
   const matchH = 64
   const gap    = 6
   const totalH = count * matchH + (count - 1) * gap
@@ -77,7 +79,7 @@ function RoundConnector({ count, mirror = false }: { count: number; mirror?: boo
     return (
       <svg width="24" height={matchH} viewBox={`0 0 24 ${matchH}`} fill="none"
            style={mirror ? { transform: 'scaleX(-1)' } : undefined}>
-        <line x1="0" y1={cy} x2="24" y2={cy} stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" />
+        <line x1="0" y1={cy} x2="24" y2={cy} stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" />
       </svg>
     )
   }
@@ -93,13 +95,13 @@ function RoundConnector({ count, mirror = false }: { count: number; mirror?: boo
           <g key={i}>
             {/* braço superior: (0,y1) → (12,yMid) */}
             <path d={`M0 ${y1} Q12 ${y1} 12 ${yMid}`}
-                  stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" fill="none" />
+                  stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" fill="none" />
             {/* braço inferior: (0,y2) → (12,yMid) — espelho do superior */}
             <path d={`M0 ${y2} Q12 ${y2} 12 ${yMid}`}
-                  stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" fill="none" />
+                  stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" fill="none" />
             {/* linha horizontal até à próxima coluna */}
             <line x1="12" y1={yMid} x2="24" y2={yMid}
-                  stroke="rgba(0,168,84,0.3)" strokeWidth="1.5" />
+                  stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" />
           </g>
         )
       })}

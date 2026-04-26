@@ -122,7 +122,7 @@ test('@slow Jornada completa: grupos → bracket → campeão → share', async 
   // FASE 3 — Share
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.getByTestId('share-button').click()
-  await expect(page.getByTestId('share-button')).toContainText('Link copiado')
+  await expect(page.getByTestId('share-button')).toContainText('Copiado!')
 
   const sharedUrl = await page.evaluate(() => navigator.clipboard.readText())
   expect(sharedUrl).toMatch(/\?s=/)
