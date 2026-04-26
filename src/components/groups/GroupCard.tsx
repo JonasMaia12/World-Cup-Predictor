@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useStore } from '@/store'
 import { GROUPS, FIXTURES, TEAMS } from '@/data/wc2026'
 import { classifyGroup } from '@/engine/classifier'
@@ -67,9 +67,8 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
               const team = TEAMS.find((t) => t.code === s.teamCode)
               const qualifies = idx < 2
               return (
-                <>
+                <React.Fragment key={s.teamCode}>
                   <tr
-                    key={s.teamCode}
                     className={cn(
                       'border-t border-wcp-border text-xs relative',
                       qualifies ? 'text-wcp-text' : 'text-wcp-muted',
@@ -104,7 +103,7 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               )
             })}
           </tbody>
