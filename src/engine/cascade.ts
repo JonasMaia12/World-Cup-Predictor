@@ -136,7 +136,7 @@ export function cascadeClearKnockoutFromMatch(
     if (!downstream.has(id)) {
       downstream.add(id)
       for (const child of KNOCKOUT_CHILDREN[id] ?? []) {
-        queue.push(child)
+        if (!downstream.has(child)) queue.push(child)
       }
     }
   }

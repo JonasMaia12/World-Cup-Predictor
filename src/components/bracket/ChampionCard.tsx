@@ -85,10 +85,10 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
     return () => cancelAnimationFrame(t)
   }, [champion])
 
-  // Focus close button when modal opens (a11y)
+  // Focus close button when modal opens or champion changes while open (a11y)
   useEffect(() => {
     if (open) closeRef.current?.focus()
-  }, [open])
+  }, [open, champion])
 
   // Close on Escape + lock body scroll while open
   useEffect(() => {
