@@ -21,7 +21,7 @@ test('share button copia URL com ?s= para o clipboard', async ({ page }) => {
   // Close modal then share
   await page.getByTestId('modal-close').click()
   await page.getByTestId('share-button').click()
-  await expect(page.getByTestId('share-button')).toContainText('Link copiado')
+  await expect(page.getByTestId('share-button')).toContainText('Copiado!')
 
   const clipboardUrl = await page.evaluate(() => navigator.clipboard.readText())
   expect(clipboardUrl).toMatch(/\?s=/)
@@ -42,7 +42,7 @@ test('URL compartilhada restaura o estado do bracket ao carregar', async ({ page
   // Close modal and share
   await page.getByTestId('modal-close').click()
   await page.getByTestId('share-button').click()
-  await expect(page.getByTestId('share-button')).toContainText('Link copiado')
+  await expect(page.getByTestId('share-button')).toContainText('Copiado!')
 
   const sharedUrl = await page.evaluate(() => navigator.clipboard.readText())
   expect(sharedUrl).toMatch(/\?s=/)

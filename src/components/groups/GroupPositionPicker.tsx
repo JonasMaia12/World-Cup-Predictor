@@ -68,7 +68,7 @@ export function GroupPositionPicker({ groupId, onClose }: GroupPositionPickerPro
               data-team={code}
               className="flex items-center gap-2 bg-wcp-surface rounded-lg px-3 py-2"
             >
-              <span className="text-[10px] text-wcp-muted w-4">{idx + 1}.</span>
+              <span className="text-xs text-wcp-muted w-4">{idx + 1}.</span>
               <span className="text-base">{team?.flag}</span>
               <span className="text-sm font-semibold text-wcp-text flex-1">{code}</span>
 
@@ -78,7 +78,7 @@ export function GroupPositionPicker({ groupId, onClose }: GroupPositionPickerPro
                   disabled={poolFull}
                   onClick={handleToggleThird}
                   className={cn(
-                    'text-[9px] font-semibold px-2 py-1 rounded-full transition-colors border',
+                    'text-[11px] font-semibold px-2 py-1 rounded-full transition-colors border',
                     isThirdQualified
                       ? 'bg-wcp-primary text-white border-wcp-primary'
                       : 'text-wcp-muted border-wcp-border hover:border-wcp-primary',
@@ -95,7 +95,7 @@ export function GroupPositionPicker({ groupId, onClose }: GroupPositionPickerPro
                   data-testid={`up-btn-${idx}`}
                   onClick={() => moveUp(idx)}
                   disabled={idx === 0}
-                  className="text-[9px] text-wcp-muted hover:text-wcp-primary disabled:opacity-20 leading-none"
+                  className="text-[11px] text-wcp-muted hover:text-wcp-primary disabled:opacity-20 leading-none"
                 >
                   ▲
                 </button>
@@ -103,7 +103,7 @@ export function GroupPositionPicker({ groupId, onClose }: GroupPositionPickerPro
                   data-testid={`down-btn-${idx}`}
                   onClick={() => moveDown(idx)}
                   disabled={idx === order.length - 1}
-                  className="text-[9px] text-wcp-muted hover:text-wcp-primary disabled:opacity-20 leading-none"
+                  className="text-[11px] text-wcp-muted hover:text-wcp-primary disabled:opacity-20 leading-none"
                 >
                   ▼
                 </button>

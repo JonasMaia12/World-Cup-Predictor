@@ -99,7 +99,7 @@ export function MatchRow({ match, homeScore, awayScore, onScoreChange, onClearSc
               onClearScore!(match.id)
             }}
             aria-label="Limpar placar"
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center text-wcp-muted hover:text-wcp-text hover:bg-wcp-surface-subtle transition-colors text-[10px] font-bold"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center text-wcp-muted hover:text-wcp-text hover:bg-wcp-surface-subtle transition-colors text-xs font-bold"
           >
             ✕
           </button>

@@ -215,7 +215,7 @@ test('@slow share: URL restaura grupos E knockout em nova página', async ({ pag
   })
 
   await page.getByTestId('share-button').click()
-  await expect(page.getByTestId('share-button')).toContainText('Link copiado')
+  await expect(page.getByTestId('share-button')).toContainText('Copiado!')
 
   const sharedUrl = await page.evaluate(() => navigator.clipboard.readText())
   expect(sharedUrl).toMatch(/\?s=/)
@@ -242,7 +242,7 @@ test('@slow share: thirdQualifiers não persistem na URL (comportamento esperado
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
 
   await page.getByTestId('share-button').click()
-  await expect(page.getByTestId('share-button')).toContainText('Link copiado')
+  await expect(page.getByTestId('share-button')).toContainText('Copiado!')
 
   const sharedUrl = await page.evaluate(() => navigator.clipboard.readText())
   const page2 = await context.newPage()
