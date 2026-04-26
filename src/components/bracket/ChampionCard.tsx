@@ -121,21 +121,19 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
       >
         <Sparkles />
 
-        {/* Close button */}
-        <button
-          data-testid="champion-modal-close"
-          onClick={() => setOpen(false)}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-wcp-primary-faint
-            flex items-center justify-center text-wcp-muted text-lg transition-colors"
-        >
-          ×
-        </button>
-
-        {/* Top strip */}
-        <div className="bg-wcp-primary px-4 py-2 flex items-center justify-center gap-2">
-          <span className="text-white text-[11px] font-bold tracking-[3px] uppercase">
+        {/* Top strip with close button */}
+        <div className="bg-wcp-primary px-4 py-2 flex items-center justify-between">
+          <span className="text-white text-[11px] font-bold tracking-[3px] uppercase flex-1 text-center">
             Campeão do Mundo 2026
           </span>
+          <button
+            data-testid="champion-modal-close"
+            onClick={() => setOpen(false)}
+            className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center
+              text-white text-lg leading-none transition-colors shrink-0"
+          >
+            ×
+          </button>
         </div>
 
         {/* Hero */}
