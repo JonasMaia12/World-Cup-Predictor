@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens ──────────────────────────────────────────── */
+:root {
+  --wcp-bg:             #f0f4f1;
+  --wcp-surface:        #ffffff;
+  --wcp-surface-subtle: #e8f5ec;
+  --wcp-primary:        #00a854;
+  --wcp-primary-light:  #00c866;
+  --wcp-primary-faint:  rgba(0,200,102,0.08);
+  --wcp-text:           #1a2a1a;
+  --wcp-muted:          #607060;
+  --wcp-border:         rgba(0,200,102,0.13);
+  --wcp-header:         #1a2a1a;
+}
+
+.dark {
+  --wcp-bg:             #0e1410;
+  --wcp-surface:        #161e16;
+  --wcp-surface-subtle: #1c2e1c;
+  --wcp-primary:        #00c866;
+  --wcp-primary-light:  #00e07a;
+  --wcp-primary-faint:  rgba(0,200,102,0.12);
+  --wcp-text:           #e8f2e8;
+  --wcp-muted:          #7a9c7a;
+  --wcp-border:         rgba(0,200,102,0.22);
+  --wcp-header:         #0a120a;
+}
+
 @layer base {
   * {
     @apply border-wcp-border;
