@@ -10,11 +10,15 @@ Simulador interativo da Copa do Mundo FIFA 2026. Preencha os placares da fase de
 
 - **48 seleções, 12 grupos** — fixtures oficiais FIFA 2026
 - **Stepper +/−** para inserir placares com um toque — sem teclado
+- **Simulador automático** — gera placares aleatórios por grupo (distribuição de Poisson)
 - **Classificação automática** com critérios FIFA (pontos → saldo → gols → H2H → sorteio)
-- **8 melhores terceiros** selecionados e inseridos no bracket automaticamente
+- **8 melhores terceiros** selecionados e inseridos no bracket com GroupPositionPicker
+- **Bracket eliminatório interativo** — clique em qualquer partida para definir o vencedor
+- **Placar exato ou só o vencedor** — dois modos no modal de partida eliminatória
+- **Cascata automática** — alterar um resultado de grupo limpa os rounds downstream
+- **Card do campeão animado** — trajetória completa do vencedor com compartilhamento
 - **Bracket espinha de peixe** (desktop) e navegação por rodada com minimap (mobile)
 - **Compartilhamento via URL** — estado salvo em base64url no parâmetro `?s=`
-- **Favoritos da comunidade** — barra com as seleções mais escolhidas (via Turso)
 - **Persistência local** — progresso salvo no LocalStorage
 
 ---
@@ -26,10 +30,8 @@ Simulador interativo da Copa do Mundo FIFA 2026. Preencha os placares da fase de
 | Frontend | Vite + React 19 + TypeScript |
 | UI | Tailwind CSS + Shadcn/UI |
 | Estado | Zustand + persist |
-| Data fetching | TanStack Query v5 |
-| Testes unitários | Vitest + Testing Library |
-| Testes E2E | Playwright |
-| Banco de dados | Turso (libSQL) + Drizzle ORM |
+| Testes unitários | Vitest + Testing Library (146 testes) |
+| Testes E2E | Playwright (20 testes) |
 | Deploy | GitHub Pages + GitHub Actions |
 
 ---
@@ -58,11 +60,7 @@ npm run build
 Crie um arquivo `.env.local` na raiz:
 
 ```env
-# Community stats via Turso (opcional — barra de favoritos só aparece se configurado)
-VITE_TURSO_URL=https://seu-banco.turso.io
-VITE_TURSO_TOKEN=seu-token
-
-# API football-data.org (não utilizada atualmente)
+# API football-data.org — para placar ao vivo (Fase 12, junho 2026)
 VITE_FOOTBALL_API_KEY=sua-chave
 ```
 
@@ -72,16 +70,15 @@ VITE_FOOTBALL_API_KEY=sua-chave
 
 ```
 src/
-├── engine/          # Lógica FIFA pura (classificação, desempate, bracket)
-├── store/           # Estado global com Zustand
-├── hooks/           # useCommunityStats, useShareLink
+├── engine/          # Lógica FIFA pura (classificação, desempate, bracket, cascade)
+├── store/           # Estado global com Zustand (tournament + ui slices)
+├── hooks/           # useShareLink
 ├── components/
-│   ├── layout/      # AppShell (header + layout)
-│   ├── groups/      # GroupAccordion, GroupTable, MatchRow
-│   ├── bracket/     # BracketView, BracketMinimap
-│   └── stats/       # CommunityStatsBar
-├── data/            # 48 seleções, 12 grupos, fixtures oficiais
-└── lib/             # QueryClient
+│   ├── layout/      # AppShell (header + logo + share button + layout)
+│   ├── groups/      # GroupAccordion, GroupTable, MatchRow, MatchModal
+│   └── bracket/     # BracketView, BracketMinimap, KnockoutMatchModal, ChampionCard
+├── data/            # 48 seleções, 12 grupos, fixtures oficiais FIFA 2026
+└── lib/             # utils
 ```
 
 ---
