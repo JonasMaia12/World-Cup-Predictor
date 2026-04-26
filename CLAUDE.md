@@ -107,6 +107,7 @@ colors: {
 - ✅ **Fase 11** — Cascade knockout + E2E completo + ChampionCard animado com trajetória — 146 unit + 20 E2E
 - ✅ **Fase 12a** — ChampionCard → modal (portal, scroll lock, Escape/backdrop), header icons mobile — 148 unit
 - ✅ **Fase 12b** — Tech debt: cascade knockout→knockout (cascadeClearKnockoutFromMatch), ARIA modal campeão — 153 unit
+- ✅ **Fase 12c** — UI polish: RoundConnector SVG entre colunas do bracket, font sizes mínimos (≥10px), dark mode via CSS variables (`:root`/`.dark`), FOUC fix em index.html — 153 unit + 20 E2E
 
 ---
 
@@ -126,7 +127,7 @@ Comparar o bracket do utilizador com os resultados reais e dar pontuação:
 - Partilhar pontuação via URL existente
 
 ### Tech Debt documentado
-- *(sem tech debt activo — tudo resolvido no PR #14)*
+- `MatchCard` em BracketView acede directamente ao store (minor — baixa prioridade, fix: passar `score` como prop de RoundColumn)
 
 ---
 
