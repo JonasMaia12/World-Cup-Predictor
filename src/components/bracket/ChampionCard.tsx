@@ -176,7 +176,7 @@ export function ChampionCard({ champion, bracket }: ChampionCardProps) {
                     key={i}
                     className="flex items-center justify-between bg-wcp-surface rounded-xl px-3 py-2 border border-wcp-border"
                   >
-                    <span className="text-[10px] text-wcp-muted w-24 shrink-0">{step.roundLabel}</span>
+                    <span className="text-xs text-wcp-muted w-24 shrink-0">{step.roundLabel}</span>
                     <div className="flex items-center gap-1.5 flex-1 justify-center">
                       {step.opponent ? (
                         <>

@@ -53,7 +53,7 @@ export function GroupCard({ groupId, onClick }: GroupCardProps) {
       <div className="px-3 py-2">
         <table className="w-full">
           <thead>
-            <tr className="text-wcp-muted text-[9px] uppercase tracking-wide">
+            <tr className="text-wcp-muted text-[11px] uppercase tracking-wide">
               <th className="p-0 w-0.5" />
               <th className="text-left py-1 pr-2">#</th>
               <th className="text-left py-1">Seleção</th>

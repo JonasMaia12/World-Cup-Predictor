@@ -64,7 +64,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
             <button
               data-testid="open-position-picker"
               onClick={() => setShowPositionPicker((v) => !v)}
-              className="text-[10px] text-wcp-primary font-semibold underline underline-offset-2 mt-0.5"
+              className="text-xs text-wcp-primary font-semibold underline underline-offset-2 mt-0.5"
             >
               🏆 Definir classificação
             </button>
@@ -117,7 +117,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
                   </button>
 
                   {/* Match info */}
-                  <div className="px-4 py-1.5 bg-wcp-surface-subtle border-b border-wcp-border flex items-center gap-3 text-[10px] text-wcp-muted">
+                  <div className="px-4 py-1.5 bg-wcp-surface-subtle border-b border-wcp-border flex items-center gap-3 text-xs text-wcp-muted">
                     <span>📅 {formatMatchDate(match.date)}</span>
                     <span>|</span>
                     <span>🏟 {match.venue}</span>
@@ -135,7 +135,7 @@ export function MatchModal({ groupId, onClose }: MatchModalProps) {
                     <button
                       data-testid={`clear-score-${match.id}`}
                       onClick={() => handleClear(match.id)}
-                      className="text-[10px] text-wcp-muted hover:text-wcp-text py-2 transition-colors"
+                      className="text-xs text-wcp-muted hover:text-wcp-text py-2 transition-colors"
                     >
                       Limpar placar
                     </button>

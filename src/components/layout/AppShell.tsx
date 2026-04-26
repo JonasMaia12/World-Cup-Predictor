@@ -17,9 +17,9 @@ function Logo() {
         </div>
         <div className="flex items-center gap-1 mt-0.5">
           <div className="w-1 h-1 rounded-full bg-wcp-primary" />
-          <span className="text-[8px] tracking-wide text-white/50">FIFA 2026</span>
+          <span className="text-[10px] tracking-wide text-white/50">FIFA 2026</span>
           <div className="w-1 h-1 rounded-full bg-wcp-primary opacity-40" />
-          <span className="text-[8px] tracking-wide text-white/50">48 seleções</span>
+          <span className="text-[10px] tracking-wide text-white/50">48 seleções</span>
         </div>
       </div>
     </div>

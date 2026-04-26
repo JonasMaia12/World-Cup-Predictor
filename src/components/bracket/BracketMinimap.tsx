@@ -34,7 +34,7 @@ export function BracketMinimap({ bracket, activeRound, onRoundSelect }: BracketM
             onClick={() => onRoundSelect(round.key)}
             data-testid={`minimap-${round.key}`}
             className={cn(
-              'flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors text-[9px] tracking-wide font-semibold',
+              'flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors text-[11px] tracking-wide font-semibold',
               activeRound === round.key
                 ? 'bg-wcp-primary-faint border border-wcp-primary-light text-wcp-primary'
                 : 'text-wcp-muted hover:bg-wcp-primary-faint',

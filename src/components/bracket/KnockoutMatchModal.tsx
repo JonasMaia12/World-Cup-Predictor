@@ -137,7 +137,7 @@ export function KnockoutMatchModal({ match, roundLabel, onClose }: KnockoutMatch
                   <div className="flex items-center justify-between py-2">
                     <div className="flex flex-col items-center gap-1 flex-1">
                       <span className="text-3xl">{homeTeam?.flag}</span>
-                      <span className="text-[10px] font-semibold text-wcp-text">{match.home}</span>
+                      <span className="text-xs font-semibold text-wcp-text">{match.home}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Stepper
@@ -160,7 +160,7 @@ export function KnockoutMatchModal({ match, roundLabel, onClose }: KnockoutMatch
                     </div>
                     <div className="flex flex-col items-center gap-1 flex-1">
                       <span className="text-3xl">{awayTeam?.flag}</span>
-                      <span className="text-[10px] font-semibold text-wcp-text">{match.away}</span>
+                      <span className="text-xs font-semibold text-wcp-text">{match.away}</span>
                     </div>
                   </div>
 
@@ -223,7 +223,7 @@ export function KnockoutMatchModal({ match, roundLabel, onClose }: KnockoutMatch
                     clearScore(match.id)
                     onClose()
                   }}
-                  className="text-[10px] text-wcp-muted hover:text-wcp-text py-1 transition-colors text-center"
+                  className="text-xs text-wcp-muted hover:text-wcp-text py-1 transition-colors text-center"
                 >
                   Limpar placar
                 </button>
