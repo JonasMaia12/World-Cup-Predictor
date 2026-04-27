@@ -63,52 +63,6 @@ function MatchCard({
   )
 }
 
-// Conecta pares de matches da coluna atual à próxima rodada via SVG.
-// mirror=true espelha horizontalmente para o lado direito do bracket.
-function RoundConnector({ count, mirror = false }: { count: number; mirror?: boolean }) {
-  const pairs = Math.floor(count / 2)
-  // matchH must match the rendered MatchCard height (2 TeamSlot rows ~28px + 1px divider)
-  // gap must match gap-1.5 (6px) used in RoundColumn
-  const matchH = 64
-  const gap    = 6
-  const totalH = count * matchH + (count - 1) * gap
-
-  // Caso especial: SF → Final (count=1, sem branching — só linha horizontal)
-  if (pairs === 0) {
-    const cy = matchH / 2
-    return (
-      <svg width="24" height={matchH} viewBox={`0 0 24 ${matchH}`} fill="none"
-           style={mirror ? { transform: 'scaleX(-1)' } : undefined}>
-        <line x1="0" y1={cy} x2="24" y2={cy} stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" />
-      </svg>
-    )
-  }
-
-  return (
-    <svg width="24" height={totalH} viewBox={`0 0 24 ${totalH}`} fill="none"
-         style={mirror ? { transform: 'scaleX(-1)' } : undefined}>
-      {Array.from({ length: pairs }).map((_, i) => {
-        const y1   = i * 2 * (matchH + gap) + matchH / 2
-        const y2   = (i * 2 + 1) * (matchH + gap) + matchH / 2
-        const yMid = (y1 + y2) / 2
-        return (
-          <g key={i}>
-            {/* braço superior: (0,y1) → (12,yMid) */}
-            <path d={`M0 ${y1} Q12 ${y1} 12 ${yMid}`}
-                  stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" fill="none" />
-            {/* braço inferior: (0,y2) → (12,yMid) — espelho do superior */}
-            <path d={`M0 ${y2} Q12 ${y2} 12 ${yMid}`}
-                  stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" fill="none" />
-            {/* linha horizontal até à próxima coluna */}
-            <line x1="12" y1={yMid} x2="24" y2={yMid}
-                  stroke="var(--wcp-primary)" strokeOpacity="0.3" strokeWidth="1.5" />
-          </g>
-        )
-      })}
-    </svg>
-  )
-}
-
 function RoundColumn({
   title,
   matches,
@@ -148,30 +102,22 @@ function DesktopBracket({
 
   return (
     <div className="overflow-x-auto py-4 px-4">
-      <div className="flex items-start justify-center min-w-fit">
+      <div className="flex items-center justify-center min-w-fit" style={{ gap: 'clamp(16px, 2.5vw, 40px)' }}>
         <RoundColumn title="Rodada de 32" matches={leftR32} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={8} /></div>
         <RoundColumn title="Oitavas" matches={leftR16} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={4} /></div>
         <RoundColumn title="Quartos" matches={leftQF} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={2} /></div>
         <RoundColumn title="Semis" matches={leftSF} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={1} /></div>
 
-        <div className="flex flex-col items-center gap-2 px-3 pt-5">
+        <div className="flex flex-col items-center gap-2 px-3">
           <span className="text-[11px] text-wcp-primary tracking-wide uppercase font-display font-bold">Final</span>
           <div className="border-2 border-wcp-primary rounded-xl overflow-hidden">
             <MatchCard match={bracket.final} onClick={onMatchClick} />
           </div>
         </div>
 
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={1} mirror /></div>
         <RoundColumn title="Semis" matches={rightSF} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={2} mirror /></div>
         <RoundColumn title="Quartos" matches={rightQF} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={4} mirror /></div>
         <RoundColumn title="Oitavas" matches={rightR16} onMatchClick={onMatchClick} />
-        <div className="flex flex-col"><div className="h-5" /><RoundConnector count={8} mirror /></div>
         <RoundColumn title="Rodada de 32" matches={rightR32} onMatchClick={onMatchClick} />
       </div>
     </div>
